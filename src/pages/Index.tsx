@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
@@ -11,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   const { user, signOut, loading: authLoading } = useAuth();
-  const { subjects, loading: subjectsLoading, addSubject, updateSubject } = useSubjects();
+  const { subjects, loading: subjectsLoading, addSubject, updateSubject, deleteSubject } = useSubjects();
 
   // Show loading state
   if (authLoading) {
@@ -112,6 +111,7 @@ const Index = () => {
                 subject={subject}
                 minPercentage={subject.minimum_attendance}
                 onUpdate={updateSubject}
+                onDelete={deleteSubject}
               />
             ))}
           </div>

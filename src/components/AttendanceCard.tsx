@@ -1,8 +1,18 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Circle } from "lucide-react";
+import { Circle, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 type Subject = {
   id: string;
@@ -16,7 +26,8 @@ export const AttendanceCard: React.FC<{
   subject: Subject;
   minPercentage: number;
   onUpdate: (subject: Subject) => void;
-}> = ({ subject, minPercentage, onUpdate }) => {
+  onDelete?: (id: string) => void;
+}> = ({ subject, minPercentage, onUpdate, onDelete }) => {
   const { name, attended, total } = subject;
   const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
   const isAboveMin = percentage >= minPercentage;
@@ -40,9 +51,43 @@ export const AttendanceCard: React.FC<{
     ? "#ffd59e" // soft amber
     : "#ffb3b3"; // light red
 
-  // Animate percentage (CSS transitions for width/appearance)
   return (
-    <Card className="flex group transition-all duration-500 shadow-md glass-card px-2 py-3 items-center">
+    <Card className="flex group transition-all duration-500 shadow-md glass-card px-2 py-3 items-center relative">
+      {/* Remove Subject Button */}
+      {onDelete && (
+        <div className="absolute top-2 right-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                tabIndex={0}
+                aria-label="Remove subject"
+              >
+                <Trash2 className="w-5 h-5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove this subject?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to remove <b>{subject.name}</b>? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(subject.id)}
+                  className="bg-destructive text-white hover:bg-destructive/90"
+                >
+                  Remove
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
       {/* LEFT: Circular Progress */}
       <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 min-w-24 mr-4">
         <div className="relative">
