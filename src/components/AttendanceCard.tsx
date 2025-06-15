@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Circle, Trash2 } from "lucide-react";
+import { Circle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -13,6 +13,9 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+
+// Use a limited palette for alert icons
+import { CircleAlert } from "lucide-react";
 
 type Subject = {
   id: string;
@@ -27,12 +30,34 @@ export const AttendanceCard: React.FC<{
   minPercentage: number;
   onUpdate: (subject: Subject) => void;
   onDelete?: (id: string) => void;
-}> = ({ subject, minPercentage, onUpdate, onDelete }) => {
+  onAlertTrigger?: (alert: {
+    subjectId: string;
+    subjectName: string;
+    percentage: number;
+    minPercentage: number;
+  }) => void;
+}> = ({ subject, minPercentage, onUpdate, onDelete, onAlertTrigger }) => {
   const { name, attended, total } = subject;
   const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
-  const isAboveMin = percentage >= minPercentage;
+  const isBelowMin = percentage < minPercentage;
+  const isWarning = !isBelowMin && percentage < minPercentage + 5;
+
+  // For toast manager: emit on mount & when attendance changes
+  React.useEffect(() => {
+    if (onAlertTrigger) {
+      onAlertTrigger({
+        subjectId: subject.id,
+        subjectName: subject.name,
+        percentage,
+        minPercentage,
+      });
+    }
+    // Note: intentionally only depends on percentage/minPercentage, not unneeded fields
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [percentage, minPercentage]);
+
   let classesNeeded = 0;
-  if (percentage < minPercentage) {
+  if (isBelowMin) {
     const needed =
       minPercentage === 100
         ? attended > total
@@ -45,14 +70,22 @@ export const AttendanceCard: React.FC<{
   }
 
   // Pastel ring color
-  const ringColor = isAboveMin
-    ? "#8fbc8f" // sage
-    : percentage > minPercentage - 10
-    ? "#ffd59e" // soft amber
-    : "#ffb3b3"; // light red
+  const ringColor = isBelowMin
+    ? "#ffb3b3" // red
+    : isWarning
+    ? "#ffd59e" // yellow
+    : "#8fbc8f"; // sage
+
+  // Card border highlight
+  const cardBorder =
+    isBelowMin
+      ? "border-[hsl(var(--destructive))] border-2 shadow-destructive/50"
+      : isWarning
+      ? "border-yellow-400 border-2 shadow-yellow-200"
+      : "";
 
   return (
-    <Card className="flex group transition-all duration-500 shadow-md glass-card px-2 py-3 items-center relative">
+    <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${cardBorder}`}>
       {/* Remove Subject Button */}
       {onDelete && (
         <div className="absolute top-2 right-2">
@@ -126,6 +159,12 @@ export const AttendanceCard: React.FC<{
           >
             {percentage}%
           </span>
+          {/* Visual danger/warning icon, top-right of the ring */}
+          {(isBelowMin || isWarning) && (
+            <span className={`absolute -top-2 right-0 bg-white rounded-full p-1 shadow ${isBelowMin ? "text-destructive" : "text-yellow-500"}`} title={isBelowMin ? "Below minimum attendance" : "Warning: close to minimum"}>
+              <CircleAlert className="w-6 h-6" strokeWidth={2.3} />
+            </span>
+          )}
         </div>
       </div>
       {/* RIGHT: Card Info */}
@@ -175,7 +214,7 @@ export const AttendanceCard: React.FC<{
           </Button>
         </div>
         <div className="mt-2 text-xs font-medium">
-          {isAboveMin ? (
+          {!isBelowMin && !isWarning && (
             <span className="text-[hsl(var(--success))] flex items-center gap-2">
               <Circle
                 className="w-5 h-5 text-[hsl(var(--success))]"
@@ -183,15 +222,21 @@ export const AttendanceCard: React.FC<{
               />{" "}
               Above minimum attendance ({minPercentage}%)
             </span>
-          ) : (
+          )}
+          {isWarning && (
+            <span className="text-yellow-700 bg-yellow-100 rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow">
+              <CircleAlert className="w-5 h-5 text-yellow-700 flex-shrink-0" strokeWidth={2} />
+              <span>
+                Close to minimum! You're at {percentage}% (min {minPercentage}%)
+              </span>
+            </span>
+          )}
+          {isBelowMin && (
             <span
               className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
               style={{ wordBreak: "break-word" }}
             >
-              <Circle
-                className="w-5 h-5 text-[hsl(var(--warning))] flex-shrink-0"
-                strokeWidth={2}
-              />
+              <CircleAlert className="w-5 h-5 text-[hsl(var(--destructive))] flex-shrink-0" strokeWidth={2} />
               <span className="whitespace-nowrap">
                 To reach {minPercentage}%, attend next
               </span>

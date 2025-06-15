@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { AttendanceCard } from "@/components/AttendanceCard";
@@ -7,6 +7,7 @@ import { useSubjects } from "@/hooks/useSubjects";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
+import WarningToastManager from "@/components/WarningToastManager";
 
 const Index = () => {
   const { user, signOut, loading: authLoading } = useAuth();
@@ -42,8 +43,17 @@ const Index = () => {
     addSubject(name, minAttendance, attended, total);
   };
 
+  // For real-time warning toasts
+  // We'll call setAlert each time a card triggers a warning/danger
+  const [recentAlert, setRecentAlert] = useState<{
+    subjectId: string; subjectName: string; percentage: number; minPercentage: number;
+  } | null>(null);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Warning toast handler */}
+      <WarningToastManager recentAlert={recentAlert} />
+
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,6 +122,7 @@ const Index = () => {
                 minPercentage={subject.minimum_attendance}
                 onUpdate={updateSubject}
                 onDelete={deleteSubject}
+                onAlertTrigger={setRecentAlert}
               />
             ))}
           </div>
