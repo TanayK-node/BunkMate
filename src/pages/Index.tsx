@@ -10,8 +10,15 @@ import { Toaster } from "@/components/ui/toaster";
 import WarningToastManager from "@/components/WarningToastManager";
 
 const Index = () => {
+  // --- All hooks at the top, *before* any conditional code (NO conditional returns before hooks)
   const { user, signOut, loading: authLoading } = useAuth();
   const { subjects, loading: subjectsLoading, addSubject, updateSubject, deleteSubject } = useSubjects();
+
+  // For real-time warning toasts
+  // We'll call setAlert each time a card triggers a warning/danger
+  const [recentAlert, setRecentAlert] = React.useState<{
+    subjectId: string; subjectName: string; percentage: number; minPercentage: number;
+  } | null>(null);
 
   // Show loading state
   if (authLoading) {
@@ -42,12 +49,6 @@ const Index = () => {
   ) => {
     addSubject(name, minAttendance, attended, total);
   };
-
-  // For real-time warning toasts
-  // We'll call setAlert each time a card triggers a warning/danger
-  const [recentAlert, setRecentAlert] = useState<{
-    subjectId: string; subjectName: string; percentage: number; minPercentage: number;
-  } | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

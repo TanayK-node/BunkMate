@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 // Use a limited palette for alert icons
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Trash2 } from "lucide-react";
 
 type Subject = {
   id: string;

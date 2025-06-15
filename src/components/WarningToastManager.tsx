@@ -45,34 +45,14 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
       // Don't toast if going back to safe (for simplicity)
       if (zone === "danger") {
         toast({
-          title: (
-            <span className="flex items-center gap-2 text-destructive">
-              <CircleAlert className="w-5 h-5" /> Danger zone!
-            </span>
-          ),
-          description: (
-            <>
-              <span>
-                You are <b>below</b> the minimum attendance in <b>{subjectName}</b> ({percentage}%/{minPercentage}%).
-              </span>
-            </>
-          ),
+          title: "Danger zone!", // changed to string
+          description: `You are BELOW the minimum attendance in ${subjectName} (${percentage}%/${minPercentage}%).`,
           variant: "destructive",
         });
       } else if (zone === "warn") {
         toast({
-          title: (
-            <span className="flex items-center gap-2 text-yellow-600">
-              <CircleAlert className="w-5 h-5" /> Warning!
-            </span>
-          ),
-          description: (
-            <>
-              <span>
-                Your attendance in <b>{subjectName}</b> is getting close to the minimum ({percentage}%/{minPercentage}%).
-              </span>
-            </>
-          ),
+          title: "Warning!", // string only
+          description: `Your attendance in ${subjectName} is getting close to the minimum (${percentage}%/${minPercentage}%).`,
           variant: "default",
         });
       }
@@ -84,4 +64,3 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
 };
 
 export default WarningToastManager;
-
