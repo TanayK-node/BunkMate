@@ -40,18 +40,18 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
 
     if (!lastAlertZone.current) lastAlertZone.current = {};
 
-    // Only show a toast if zone changed (for this subject)
     if (lastAlertZone.current[subjectId] !== zone) {
-      // Don't toast if going back to safe (for simplicity)
       if (zone === "danger") {
+        // SOLID RED TOAST (destructive variant) for danger
         toast({
-          title: "Danger zone!", // changed to string
+          title: "Danger zone!",
           description: `You are BELOW the minimum attendance in ${subjectName} (${percentage}%/${minPercentage}%).`,
-          variant: "destructive",
+          variant: "destructive", // Red background
         });
       } else if (zone === "warn") {
+        // Subtle/default for warning only
         toast({
-          title: "Warning!", // string only
+          title: "Warning!",
           description: `Your attendance in ${subjectName} is getting close to the minimum (${percentage}%/${minPercentage}%).`,
           variant: "default",
         });
@@ -64,3 +64,4 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
 };
 
 export default WarningToastManager;
+

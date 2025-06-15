@@ -76,10 +76,10 @@ export const AttendanceCard: React.FC<{
     ? "#ffd59e" // yellow
     : "#8fbc8f"; // sage
 
-  // Card border highlight
+  // Card border highlight - MAKE RED BORDER SOLID when in danger zone
   const cardBorder =
     isBelowMin
-      ? "border-[hsl(var(--destructive))] border-2 shadow-destructive/50"
+      ? "border-red-600 border-4 shadow-red-200"   // SOLID red border for danger
       : isWarning
       ? "border-yellow-400 border-2 shadow-yellow-200"
       : "";
