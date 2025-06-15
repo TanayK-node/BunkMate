@@ -233,14 +233,14 @@ export const AttendanceCard: React.FC<{
           )}
           {isBelowMin && (
             <span
-              className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
+              className="text-white bg-red-600 rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
               style={{ wordBreak: "break-word" }}
             >
-              <CircleAlert className="w-5 h-5 text-[hsl(var(--destructive))] flex-shrink-0" strokeWidth={2} />
+              <CircleAlert className="w-5 h-5 text-white flex-shrink-0" strokeWidth={2} />
               <span className="whitespace-nowrap">
                 To reach {minPercentage}%, attend next
               </span>
-              <b className="font-bold text-[hsl(var(--warning))] px-1">
+              <b className="font-bold px-1">
                 {classesNeeded}
               </b>
               class
