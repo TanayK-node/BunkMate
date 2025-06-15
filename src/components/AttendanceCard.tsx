@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,8 +66,9 @@ export const AttendanceCard: React.FC<{
               }
               strokeLinecap="round"
               style={{
-                transition: "stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1), stroke 0.3s",
-                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.07))"
+                transition:
+                  "stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1), stroke 0.3s",
+                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.07))",
               }}
             />
           </svg>
@@ -83,19 +83,25 @@ export const AttendanceCard: React.FC<{
       {/* RIGHT: Card Info */}
       <CardContent className="flex-1 flex flex-col gap-4 p-0">
         <div>
-          <div className="text-xl md:text-2xl font-semibold tracking-wide text-foreground/90">{name}</div>
+          <div className="text-xl md:text-2xl font-semibold tracking-wide text-foreground/90">
+            {name}
+          </div>
           <div className="text-sm text-muted-foreground mt-1">
-            <strong className="text-lg font-semibold text-foreground/80">{attended}</strong>
+            <strong className="text-lg font-semibold text-foreground/80">
+              {attended}
+            </strong>
             <span className="text-foreground/40"> / </span>
-            <strong className="text-lg font-semibold text-foreground/80">{total}</strong>
+            <strong className="text-lg font-semibold text-foreground/80">
+              {total}
+            </strong>
             <span className="ml-1 text-foreground/40">classes attended</span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-1">
           <Button
             variant="default"
-            size="lg"
-            className="flex-1 shadow"
+            size="sm"
+            className="flex-1 shadow min-w-0 whitespace-nowrap"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -108,8 +114,8 @@ export const AttendanceCard: React.FC<{
           </Button>
           <Button
             variant="secondary"
-            size="lg"
-            className="flex-1 shadow"
+            size="sm"
+            className="flex-1 shadow min-w-0 whitespace-nowrap"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -123,13 +129,23 @@ export const AttendanceCard: React.FC<{
         <div className="mt-2 text-xs font-medium">
           {isAboveMin ? (
             <span className="text-[hsl(var(--success))] flex items-center gap-2">
-              <Circle className="w-5 h-5 text-[hsl(var(--success))]" strokeWidth={2} /> Above minimum attendance ({minPercentage}%)
+              <Circle
+                className="w-5 h-5 text-[hsl(var(--success))]"
+                strokeWidth={2}
+              />{" "}
+              Above minimum attendance ({minPercentage}%)
             </span>
           ) : (
             <span className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex items-center gap-2 animate-pulse-slow">
-              <Circle className="w-5 h-5 text-[hsl(var(--warning))]" strokeWidth={2} />
+              <Circle
+                className="w-5 h-5 text-[hsl(var(--warning))]"
+                strokeWidth={2}
+              />
               To reach {minPercentage}%, attend next{" "}
-              <b className="font-bold text-[hsl(var(--warning))]">{classesNeeded}</b> class
+              <b className="font-bold text-[hsl(var(--warning))]">
+                {classesNeeded}
+              </b>{" "}
+              class
               {classesNeeded !== 1 && "es"} in a row
             </span>
           )}
