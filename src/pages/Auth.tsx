@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Auth = () => {
   const { user, signIn, signUp } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
 
   // Redirect if already authenticated
   if (user) {
@@ -136,13 +138,28 @@ const Auth = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    placeholder="Create a password"
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type={showSignUpPassword ? "text" : "password"}
+                      placeholder="Create a password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted focus:outline-none"
+                      onClick={() => setShowSignUpPassword((v) => !v)}
+                      aria-label={showSignUpPassword ? "Hide password" : "Show password"}
+                    >
+                      {showSignUpPassword ? (
+                        <EyeOff className="w-5 h-5 text-muted-foreground" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-muted-foreground" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Creating Account..." : "Sign Up"}
