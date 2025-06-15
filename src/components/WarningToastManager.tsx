@@ -45,15 +45,15 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
       // Don't toast if going back to safe (for simplicity)
       if (zone === "danger") {
         toast({
-          title: "Danger zone!",
+          title: "Danger zone!", // changed to string
           description: `You are BELOW the minimum attendance in ${subjectName} (${percentage}%/${minPercentage}%).`,
           variant: "destructive",
         });
       } else if (zone === "warn") {
         toast({
-          title: "Warning!",
+          title: "Warning!", // string only
           description: `Your attendance in ${subjectName} is getting close to the minimum (${percentage}%/${minPercentage}%).`,
-          variant: "warning",
+          variant: "default",
         });
       }
       lastAlertZone.current[subjectId] = zone;
