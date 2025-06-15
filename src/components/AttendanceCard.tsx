@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Circle } from "lucide-react";
+import { Circle, CalendarCheck, CircleAlert, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -14,15 +14,14 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 
-// Use a limited palette for alert icons
-import { CircleAlert, Trash2 } from "lucide-react";
-
+// Keep subject type in sync
 type Subject = {
   id: string;
   name: string;
   attended: number;
   total: number;
   minimum_attendance: number;
+  total_semester_lectures?: number | null;
 };
 
 export const AttendanceCard: React.FC<{
@@ -37,10 +36,34 @@ export const AttendanceCard: React.FC<{
     minPercentage: number;
   }) => void;
 }> = ({ subject, minPercentage, onUpdate, onDelete, onAlertTrigger }) => {
-  const { name, attended, total } = subject;
+  const { name, attended, total, total_semester_lectures } = subject;
   const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
   const isBelowMin = percentage < minPercentage;
   const isWarning = !isBelowMin && percentage < minPercentage + 5;
+
+  /** Bunkable class logic */
+  let bunkableInfo: { display?: string; count?: number; color?: string; } = {};
+  if (
+    total_semester_lectures &&
+    percentage > minPercentage &&
+    total_semester_lectures > 0
+  ) {
+    const minAttendanceRequired = Math.ceil(
+      total_semester_lectures * (minPercentage / 100)
+    );
+    const maxMissable = total_semester_lectures - minAttendanceRequired;
+    const alreadyMissed = total - attended;
+    const bunkableClasses = Math.max(0, maxMissable - alreadyMissed);
+
+    bunkableInfo = {
+      count: bunkableClasses,
+      color: bunkableClasses > 0 ? "text-green-700 bg-green-100" : "text-orange-700 bg-orange-100",
+      display:
+        bunkableClasses > 0
+          ? `You can safely miss ${bunkableClasses} more class${bunkableClasses === 1 ? "" : "es"}`
+          : `No more classes can be missed`,
+    };
+  }
 
   // For toast manager: emit on mount & when attendance changes
   React.useEffect(() => {
@@ -55,19 +78,6 @@ export const AttendanceCard: React.FC<{
     // Note: intentionally only depends on percentage/minPercentage, not unneeded fields
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percentage, minPercentage]);
-
-  let classesNeeded = 0;
-  if (isBelowMin) {
-    const needed =
-      minPercentage === 100
-        ? attended > total
-          ? 0
-          : total + 1 - attended
-        : Math.ceil(
-            (minPercentage * total - 100 * attended) / (100 - minPercentage)
-          );
-    classesNeeded = Math.max(needed, 0);
-  }
 
   // Pastel ring color
   const ringColor = isBelowMin
@@ -85,7 +95,11 @@ export const AttendanceCard: React.FC<{
       : "";
 
   return (
-    <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${cardBorder}`}>
+    <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${isBelowMin
+      ? "border-red-600 border-2 shadow-red-200"
+      : isWarning
+      ? "border-yellow-400 border-2 shadow-yellow-200"
+      : ""}`}>
       {/* Remove Subject Button */}
       {onDelete && (
         <div className="absolute top-2 right-2">
@@ -139,7 +153,13 @@ export const AttendanceCard: React.FC<{
               cy="36"
               r="30"
               fill="none"
-              stroke={ringColor}
+              stroke={
+                isBelowMin
+                  ? "#ffb3b3"
+                  : isWarning
+                  ? "#ffd59e"
+                  : "#8fbc8f"
+              }
               strokeWidth="9"
               strokeDasharray={2 * Math.PI * 30}
               strokeDashoffset={
@@ -159,7 +179,6 @@ export const AttendanceCard: React.FC<{
           >
             {percentage}%
           </span>
-          {/* Visual danger/warning icon, top-right of the ring */}
           {(isBelowMin || isWarning) && (
             <span className={`absolute -top-2 right-0 bg-white rounded-full p-1 shadow ${isBelowMin ? "text-destructive" : "text-yellow-500"}`} title={isBelowMin ? "Below minimum attendance" : "Warning: close to minimum"}>
               <CircleAlert className="w-6 h-6" strokeWidth={2.3} />
@@ -184,6 +203,17 @@ export const AttendanceCard: React.FC<{
             <span className="ml-1 text-foreground/40">classes attended</span>
           </div>
         </div>
+        {/* BUNKABLE CLASSES LABEL */}
+        {bunkableInfo.display && (
+          <div
+            className={`flex items-center gap-2 font-semibold rounded px-2 py-1 text-base mb-2 animate-fade-in border ${bunkableInfo.count && bunkableInfo.count > 0 ? "border-green-300" : "border-orange-200"
+              } ${bunkableInfo.color}`}
+            style={{ transition: "background 0.3s" }}
+          >
+            <CalendarCheck className="w-5 h-5 flex-shrink-0" />
+            <span>{bunkableInfo.display}</span>
+          </div>
+        )}
         <div className="flex gap-2 mt-1">
           <Button
             variant="default"
@@ -241,10 +271,37 @@ export const AttendanceCard: React.FC<{
                 To reach {minPercentage}%, attend next
               </span>
               <b className="font-bold px-1">
-                {classesNeeded}
+                {/* Calculate classesNeeded using same logic as before */}
+                {(() => {
+                  if (isBelowMin) {
+                    const mp = minPercentage;
+                    const needed =
+                      mp === 100
+                        ? attended > total
+                          ? 0
+                          : total + 1 - attended
+                        : Math.ceil(
+                            (mp * total - 100 * attended) / (100 - mp)
+                          );
+                    return Math.max(needed, 0);
+                  }
+                  return null;
+                })()}
               </b>
               class
-              {classesNeeded !== 1 && "es"}
+              {(() => {
+                if (isBelowMin) {
+                  const mp = minPercentage;
+                  const needed =
+                    mp === 100
+                      ? attended > total
+                        ? 0
+                        : total + 1 - attended
+                      : Math.ceil((mp * total - 100 * attended) / (100 - mp));
+                  return Math.max(needed, 0) !== 1 ? "es" : "";
+                }
+                return "";
+              })()}
               <span className="ml-1">in a row</span>
             </span>
           )}

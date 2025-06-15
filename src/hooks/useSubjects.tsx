@@ -10,6 +10,7 @@ export type Subject = {
   attended: number;
   total: number;
   minimum_attendance: number;
+  total_semester_lectures?: number | null;
 };
 
 export const useSubjects = () => {
@@ -34,7 +35,8 @@ export const useSubjects = () => {
         name: subject.name,
         attended: subject.classes_attended || 0,
         total: subject.total_classes || 0,
-        minimum_attendance: subject.minimum_attendance || 75
+        minimum_attendance: subject.minimum_attendance || 75,
+        total_semester_lectures: subject.total_semester_lectures ?? null,
       })) || [];
 
       setSubjects(formattedSubjects);
@@ -49,12 +51,13 @@ export const useSubjects = () => {
     }
   };
 
-  // Modified addSubject to accept attended and total params
+  // Modified addSubject to accept totalSemester param
   const addSubject = async (
     name: string,
     minAttendance: number = 75,
     attended: number = 0,
-    total: number = 0
+    total: number = 0,
+    totalSemesterLectures?: number | null
   ) => {
     if (!user) return;
 
@@ -66,7 +69,8 @@ export const useSubjects = () => {
           user_id: user.id,
           minimum_attendance: minAttendance,
           classes_attended: attended,
-          total_classes: total
+          total_classes: total,
+          total_semester_lectures: totalSemesterLectures ?? null,
         })
         .select()
         .single();
@@ -78,7 +82,8 @@ export const useSubjects = () => {
         name: data.name,
         attended: data.classes_attended || 0,
         total: data.total_classes || 0,
-        minimum_attendance: data.minimum_attendance || 75
+        minimum_attendance: data.minimum_attendance || 75,
+        total_semester_lectures: data.total_semester_lectures ?? null,
       };
 
       setSubjects(prev => [...prev, newSubject]);
