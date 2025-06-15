@@ -36,7 +36,10 @@ export const useSubjects = () => {
         attended: subject.classes_attended || 0,
         total: subject.total_classes || 0,
         minimum_attendance: subject.minimum_attendance || 75,
-        total_semester_lectures: subject.total_semester_lectures ?? null,
+        // Safe access for possibly missing column
+        total_semester_lectures: typeof subject.total_semester_lectures !== "undefined"
+          ? subject.total_semester_lectures
+          : null,
       })) || [];
 
       setSubjects(formattedSubjects);
@@ -70,7 +73,8 @@ export const useSubjects = () => {
           minimum_attendance: minAttendance,
           classes_attended: attended,
           total_classes: total,
-          total_semester_lectures: totalSemesterLectures ?? null,
+          // Safe insert, only send if defined
+          ...(typeof totalSemesterLectures !== 'undefined' ? { total_semester_lectures: totalSemesterLectures } : {}),
         })
         .select()
         .single();
@@ -83,7 +87,9 @@ export const useSubjects = () => {
         attended: data.classes_attended || 0,
         total: data.total_classes || 0,
         minimum_attendance: data.minimum_attendance || 75,
-        total_semester_lectures: data.total_semester_lectures ?? null,
+        total_semester_lectures: typeof data.total_semester_lectures !== "undefined"
+          ? data.total_semester_lectures
+          : null,
       };
 
       setSubjects(prev => [...prev, newSubject]);
@@ -109,7 +115,11 @@ export const useSubjects = () => {
         .from('subjects')
         .update({
           classes_attended: updatedSubject.attended,
-          total_classes: updatedSubject.total
+          total_classes: updatedSubject.total,
+          // Update total_semester_lectures if present in updatedSubject
+          ...(typeof updatedSubject.total_semester_lectures !== 'undefined'
+            ? { total_semester_lectures: updatedSubject.total_semester_lectures }
+            : {}),
         })
         .eq('id', updatedSubject.id)
         .eq('user_id', user.id);
