@@ -185,7 +185,7 @@ export const AttendanceCard: React.FC<{
             </span>
           ) : (
             <span
-              className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex flex-col md:flex-row flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
+              className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
               style={{ wordBreak: "break-word" }}
             >
               <Circle
@@ -195,12 +195,12 @@ export const AttendanceCard: React.FC<{
               <span className="whitespace-nowrap">
                 To reach {minPercentage}%, attend next
               </span>
-              {/* Stack these vertically on mobile, inline on md+ */}
-              <span className="flex flex-col md:flex-row gap-y-[2px] md:gap-y-0 md:gap-x-1 items-center">
-                <b className="block font-bold text-[hsl(var(--warning))] px-1">{classesNeeded}</b>
-                <span className="block">classes</span>
-                <span className="block">in a row</span>
-              </span>
+              <b className="font-bold text-[hsl(var(--warning))] px-1">
+                {classesNeeded}
+              </b>
+              class
+              {classesNeeded !== 1 && "es"}
+              <span className="ml-1">in a row</span>
             </span>
           )}
         </div>
