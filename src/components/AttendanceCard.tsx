@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -184,17 +185,25 @@ export const AttendanceCard: React.FC<{
               Above minimum attendance ({minPercentage}%)
             </span>
           ) : (
-            <span className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex items-center gap-2 animate-pulse-slow">
+            <span
+              className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex flex-wrap items-center gap-x-2 gap-y-1 animate-pulse-slow"
+              style={{ wordBreak: "break-word" }}
+            >
               <Circle
-                className="w-5 h-5 text-[hsl(var(--warning))]"
+                className="w-5 h-5 text-[hsl(var(--warning))] flex-shrink-0"
                 strokeWidth={2}
               />
-              To reach {minPercentage}%, attend next{" "}
-              <b className="font-bold text-[hsl(var(--warning))]">
+              <span className="block">
+                To reach {minPercentage}%,
+                <span className="inline md:hidden"><br /></span>
+                attend next
+              </span>
+              <b className="font-bold text-[hsl(var(--warning))] px-1">
                 {classesNeeded}
-              </b>{" "}
+              </b>
               class
-              {classesNeeded !== 1 && "es"} in a row
+              {classesNeeded !== 1 && "es"}
+              <span className="ml-1">in a row</span>
             </span>
           )}
         </div>
