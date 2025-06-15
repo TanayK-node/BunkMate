@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -193,10 +192,8 @@ export const AttendanceCard: React.FC<{
                 className="w-5 h-5 text-[hsl(var(--warning))] flex-shrink-0"
                 strokeWidth={2}
               />
-              <span className="block">
-                To reach {minPercentage}%,
-                <span className="inline md:hidden"><br /></span>
-                attend next
+              <span className="whitespace-nowrap">
+                To reach {minPercentage}%, attend next
               </span>
               <b className="font-bold text-[hsl(var(--warning))] px-1">
                 {classesNeeded}
