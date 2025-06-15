@@ -7,20 +7,24 @@ import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 
 interface AddSubjectDialogProps {
-  onAddSubject: (name: string, minAttendance: number) => void;
+  onAddSubject: (name: string, minAttendance: number, attended: number, total: number) => void;
 }
 
 export const AddSubjectDialog: React.FC<AddSubjectDialogProps> = ({ onAddSubject }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [minAttendance, setMinAttendance] = useState(75);
+  const [attended, setAttended] = useState(0);
+  const [total, setTotal] = useState(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onAddSubject(name.trim(), minAttendance);
+      onAddSubject(name.trim(), minAttendance, attended, total);
       setName('');
       setMinAttendance(75);
+      setAttended(0);
+      setTotal(0);
       setOpen(false);
     }
   };
@@ -61,6 +65,30 @@ export const AddSubjectDialog: React.FC<AddSubjectDialogProps> = ({ onAddSubject
               placeholder="75"
               value={minAttendance}
               onChange={(e) => setMinAttendance(Number(e.target.value))}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="attended">Classes Attended</Label>
+            <Input
+              id="attended"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={attended}
+              onChange={(e) => setAttended(Number(e.target.value))}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="total">Total Classes Held</Label>
+            <Input
+              id="total"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={total}
+              onChange={(e) => setTotal(Number(e.target.value))}
               required
             />
           </div>

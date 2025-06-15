@@ -49,7 +49,13 @@ export const useSubjects = () => {
     }
   };
 
-  const addSubject = async (name: string, minAttendance: number = 75) => {
+  // Modified addSubject to accept attended and total params
+  const addSubject = async (
+    name: string,
+    minAttendance: number = 75,
+    attended: number = 0,
+    total: number = 0
+  ) => {
     if (!user) return;
 
     try {
@@ -59,8 +65,8 @@ export const useSubjects = () => {
           name,
           user_id: user.id,
           minimum_attendance: minAttendance,
-          classes_attended: 0,
-          total_classes: 0
+          classes_attended: attended,
+          total_classes: total
         })
         .select()
         .single();

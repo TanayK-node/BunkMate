@@ -34,6 +34,15 @@ const Index = () => {
     await signOut();
   };
 
+  const handleAddSubject = (
+    name: string,
+    minAttendance: number,
+    attended: number,
+    total: number
+  ) => {
+    addSubject(name, minAttendance, attended, total);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -75,7 +84,7 @@ const Index = () => {
 
         {/* Add Subject Button */}
         <div className="mb-6">
-          <AddSubjectDialog onAddSubject={addSubject} />
+          <AddSubjectDialog onAddSubject={handleAddSubject} />
         </div>
 
         {/* Subjects Grid */}
