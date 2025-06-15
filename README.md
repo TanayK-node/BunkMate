@@ -18,9 +18,9 @@ A **personal college project** to simplify attendance tracking for students — 
 
 ## 🔧 Tech Stack
 
-- **Frontend**: TypeScript + React (or plain TS if no framework)
+- **Frontend**: TypeScript + React 
 - **Backend/Database**: [Supabase](https://supabase.com/) (Auth + Postgres DB)
-- **Hosting**: Supabase + [Lovable.app](https://lovable.app) *(for frontend)*
+- **Hosting**: Supabase + [Lovable.app](https://lovable.app)
 
 ---
 
