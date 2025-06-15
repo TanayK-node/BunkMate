@@ -1,73 +1,113 @@
-# Welcome to your Lovable project
+# 🎓 Attendance Tracker App – *Bunk Matee*
 
-## Project info
+A **personal college project** to simplify attendance tracking for students — built using **TypeScript** and **Supabase**.
 
-**URL**: https://lovable.dev/projects/dfcabddb-f08b-42fd-a7c7-5c5b73262005
+🚀 **Live Website**: [https://bunk-matee.lovable.app](https://bunk-matee.lovable.app)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- 📧 **Email-based Sign In**: Simple and secure authentication via email using Supabase Auth.
+- 📅 **Attendance Management**: Add and manage attendance entries for your subjects.
+- 🚨 **Low Attendance Alerts**: Get notified when your attendance is near or below the required limit (e.g., 75%).
+- 📊 **Visual Overview**: Clean dashboard to monitor your attendance across all courses.
+- ✅ **Easy to Use**: Designed to help students quickly check and update their records.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/dfcabddb-f08b-42fd-a7c7-5c5b73262005) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🔧 Tech Stack
 
-**Use your preferred IDE**
+- **Frontend**: TypeScript + React (or plain TS if no framework)
+- **Backend/Database**: [Supabase](https://supabase.com/) (Auth + Postgres DB)
+- **Hosting**: Supabase + [Lovable.app](https://lovable.app) *(for frontend)*
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📸 Screenshots *(Optional)*
 
-Follow these steps:
+> _Coming soon_ — Add screenshots or screen recordings of your app here to show how it works!
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🚀 Getting Started
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 1. Clone the Repository
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+git clone https://github.com/yourusername/attendance-tracker.git
+cd attendance-tracker
+2. Install Dependencies
+bash
+Copy
+Edit
+npm install
+# or
+yarn install
+3. Set Up Supabase
+Go to Supabase and create a new project.
+
+Set up:
+
+Authentication → Enable Email Auth
+
+Database → Create an attendance table with columns like:
+
+id (UUID)
+
+user_id (UUID)
+
+subject (Text)
+
+total_classes (Integer)
+
+attended_classes (Integer)
+
+Get your Supabase URL and Anon Key from project settings.
+
+4. Configure Environment Variables
+Create a .env file in the root:
+
+env
+Copy
+Edit
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+5. Run the App
+bash
+Copy
+Edit
 npm run dev
-```
+# or
+yarn dev
+📐 Folder Structure (Example)
+css
+Copy
+Edit
+src/
+├── components/
+├── pages/
+├── supabase/         # Supabase client init
+├── utils/
+├── App.tsx
+├── main.tsx
+🎯 Future Improvements
+Push notifications for daily attendance
 
-**Edit a file directly in GitHub**
+Export to CSV/PDF
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Teacher/admin interface
 
-**Use GitHub Codespaces**
+Calendar integration
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🙋‍♂️ Why I Built This
+This is a personal tool I built to help myself keep track of attendance in college. It’s minimal, focused, and easy to expand on.
 
-## What technologies are used for this project?
+📄 License
+This project is licensed under the MIT License — see the LICENSE file for details.
 
-This project is built with:
+vbnet
+Copy
+Edit
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/dfcabddb-f08b-42fd-a7c7-5c5b73262005) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+You can create a new file called `README.md` in the root of your GitHub repo and paste this content 
