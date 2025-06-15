@@ -79,7 +79,7 @@ export const AttendanceCard: React.FC<{
   // Card border highlight - MAKE RED BORDER SOLID when in danger zone
   const cardBorder =
     isBelowMin
-      ? "border-red-600 border-4 shadow-red-200"   // SOLID red border for danger
+      ? "border-red-600 border-2 shadow-red-200"   // Thinner red border for danger
       : isWarning
       ? "border-yellow-400 border-2 shadow-yellow-200"
       : "";
