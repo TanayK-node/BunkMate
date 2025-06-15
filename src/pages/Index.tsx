@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
@@ -11,9 +10,14 @@ import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   const { user, signOut, loading: authLoading } = useAuth();
-  const { subjects, loading: subjectsLoading, addSubject, updateSubject } = useSubjects();
+  const {
+    subjects,
+    loading: subjectsLoading,
+    addSubject,
+    updateSubject,
+    deleteSubject,
+  } = useSubjects();
 
-  // Show loading state
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -25,7 +29,6 @@ const Index = () => {
     );
   }
 
-  // Redirect to auth if not logged in
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
@@ -43,9 +46,12 @@ const Index = () => {
     addSubject(name, minAttendance, attended, total);
   };
 
+  const handleDeleteSubject = (subjectId: string) => {
+    deleteSubject(subjectId);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -71,7 +77,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -82,12 +87,10 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Add Subject Button */}
         <div className="mb-6">
           <AddSubjectDialog onAddSubject={handleAddSubject} />
         </div>
 
-        {/* Subjects Grid */}
         {subjectsLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -112,6 +115,7 @@ const Index = () => {
                 subject={subject}
                 minPercentage={subject.minimum_attendance}
                 onUpdate={updateSubject}
+                onDelete={handleDeleteSubject}
               />
             ))}
           </div>
