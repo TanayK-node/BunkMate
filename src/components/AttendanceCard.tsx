@@ -1,12 +1,15 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Circle } from "lucide-react";
 
 type Subject = {
+  id: string;
   name: string;
   attended: number;
   total: number;
+  minimum_attendance: number;
 };
 
 export const AttendanceCard: React.FC<{

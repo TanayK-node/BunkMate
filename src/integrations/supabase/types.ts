@@ -9,7 +9,104 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      attendance_records: {
+        Row: {
+          attended: boolean
+          id: string
+          recorded_at: string | null
+          subject_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attended: boolean
+          id?: string
+          recorded_at?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attended?: boolean
+          id?: string
+          recorded_at?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          classes_attended: number | null
+          created_at: string | null
+          id: string
+          minimum_attendance: number | null
+          name: string
+          total_classes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          classes_attended?: number | null
+          created_at?: string | null
+          id?: string
+          minimum_attendance?: number | null
+          name: string
+          total_classes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          classes_attended?: number | null
+          created_at?: string | null
+          id?: string
+          minimum_attendance?: number | null
+          name?: string
+          total_classes?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
