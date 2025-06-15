@@ -99,7 +99,7 @@ const Index = () => {
                       className="flex flex-col sm:flex-row gap-2 items-stretch mb-1"
                     >
                       <Input
-                        placeholder="Subject name"
+                        placeholder="e.g., Mathematics"
                         value={subject.name}
                         onChange={(e) =>
                           handleSubjectChange(idx, "name", e.target.value)
@@ -109,7 +109,7 @@ const Index = () => {
                       <Input
                         type="number"
                         min={0}
-                        placeholder="Attended"
+                        placeholder="e.g., 15"
                         value={subject.attended}
                         onChange={(e) =>
                           handleSubjectChange(idx, "attended", e.target.value)
@@ -119,7 +119,7 @@ const Index = () => {
                       <Input
                         type="number"
                         min={0}
-                        placeholder="Total"
+                        placeholder="e.g., 20"
                         value={subject.total}
                         onChange={(e) =>
                           handleSubjectChange(idx, "total", e.target.value)
@@ -159,6 +159,7 @@ const Index = () => {
                   min={0}
                   max={100}
                   value={form.minPercentage}
+                  placeholder="e.g., 75"
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,

@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Circle } from "lucide-react";
 
@@ -39,23 +40,11 @@ export const AttendanceCard: React.FC<{
 
   // Animate percentage (CSS transitions for width/appearance)
   return (
-    <Card className="flex flex-col group transition-all duration-500 shadow-md">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold tracking-wide text-foreground/90">
-          {name}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>
-            <strong className="text-lg font-semibold text-foreground/80">{attended}</strong>
-            <span className="text-foreground/40"> / </span>
-            <strong className="text-lg font-semibold text-foreground/80">{total}</strong>
-            <span className="ml-1 text-foreground/50">classes</span>
-          </span>
-        </div>
-        <div className="flex items-center justify-center my-4 relative">
-          <svg width="72" height="72" viewBox="0 0 72 72" className="block">
+    <Card className="flex group transition-all duration-500 shadow-md glass-card px-2 py-3 items-center">
+      {/* LEFT: Circular Progress */}
+      <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 min-w-24 mr-4">
+        <div className="relative">
+          <svg width="80" height="80" viewBox="0 0 72 72" className="block">
             <circle
               cx="36"
               cy="36"
@@ -84,13 +73,25 @@ export const AttendanceCard: React.FC<{
             />
           </svg>
           <span
-            className="absolute inset-0 flex items-center justify-center text-3xl font-black text-foreground/80"
+            className="absolute inset-0 flex items-center justify-center text-2xl md:text-3xl font-black text-foreground/80"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
             {percentage}%
           </span>
         </div>
-        <div className="flex gap-3 mt-2">
+      </div>
+      {/* RIGHT: Card Info */}
+      <CardContent className="flex-1 flex flex-col gap-4 p-0">
+        <div>
+          <div className="text-xl md:text-2xl font-semibold tracking-wide text-foreground/90">{name}</div>
+          <div className="text-sm text-muted-foreground mt-1">
+            <strong className="text-lg font-semibold text-foreground/80">{attended}</strong>
+            <span className="text-foreground/40"> / </span>
+            <strong className="text-lg font-semibold text-foreground/80">{total}</strong>
+            <span className="ml-1 text-foreground/40">classes attended</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
           <Button
             variant="default"
             size="lg"
@@ -119,7 +120,7 @@ export const AttendanceCard: React.FC<{
             Missed
           </Button>
         </div>
-        <div className="mt-4 text-xs font-medium">
+        <div className="mt-2 text-xs font-medium">
           {isAboveMin ? (
             <span className="text-[hsl(var(--success))] flex items-center gap-2">
               <Circle className="w-5 h-5 text-[hsl(var(--success))]" strokeWidth={2} /> Above minimum attendance ({minPercentage}%)
