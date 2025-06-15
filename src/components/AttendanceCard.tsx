@@ -22,7 +22,6 @@ export const AttendanceCard: React.FC<{
   // Calculate how many more classes needed to reach requirement
   let classesNeeded = 0;
   if (percentage < minPercentage) {
-    // Formula: (min% * total - 100 * attended) / (100 - min%)
     const needed =
       minPercentage === 100
         ? attended > total
@@ -36,32 +35,40 @@ export const AttendanceCard: React.FC<{
   }
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col group transition-all duration-500">
       <CardHeader>
-        <CardTitle className="text-lg">{name}</CardTitle>
+        <CardTitle className="text-2xl font-extrabold tracking-wider drop-shadow-md text-white/90">
+          {name}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-3">
-        <div className="text-sm text-muted-foreground">
+      <CardContent className="flex-1 flex flex-col gap-4">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>
-            <strong>{attended}</strong> / <strong>{total}</strong>{" "}
-            classes attended
+            <strong className="text-lg font-semibold text-white/80">{attended}</strong>
+            <span className="text-white/50"> / </span>
+            <strong className="text-lg font-semibold text-white/80">{total}</strong>
+            <span className="ml-1 text-white/60">classes</span>
           </span>
         </div>
-        <div
-          className={
-            "text-xl font-bold " +
-            (isAboveMin
-              ? "text-green-600"
-              : "text-red-600")
-          }
-        >
-          {percentage}%
+        <div className="flex items-center justify-center my-2">
+          {/* Animated-gradient percentage number, large */}
+          <span
+            className={
+              "text-4xl md:text-5xl font-black bg-gradient-to-tr " +
+              (isAboveMin
+                ? "from-[#2fff7f] via-[#30feea] to-[#55aaff] text-transparent bg-clip-text"
+                : "from-[#ff4f64] via-[#ffcb3b] to-[#fee440] text-transparent bg-clip-text animate-pulse")
+            }
+            style={{ transition: "color 0.5s, background 0.5s" }}
+          >
+            {percentage}%
+          </span>
         </div>
-        <div className="flex gap-3 mt-2">
+        <div className="flex gap-4 mt-4">
           <Button
             variant="default"
             size="lg"
-            className="flex-1"
+            className="flex-1 shadow-xl"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -75,7 +82,7 @@ export const AttendanceCard: React.FC<{
           <Button
             variant="secondary"
             size="lg"
-            className="flex-1"
+            className="flex-1 shadow-xl"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -86,15 +93,15 @@ export const AttendanceCard: React.FC<{
             Missed
           </Button>
         </div>
-        <div className="mt-4 text-xs">
+        <div className="mt-6 text-xs font-medium">
           {isAboveMin ? (
-            <span className="text-green-700">
-              Above minimum attendance ({minPercentage}%)
+            <span className="text-green-300/80">
+              <span className="inline-block animate-pulse">✔</span> Above minimum attendance ({minPercentage}%)
             </span>
           ) : (
-            <span className="text-red-700">
+            <span className="text-yellow-200 bg-yellow-900/20 rounded px-2 py-1">
               To reach {minPercentage}%, attend next{" "}
-              <b>{classesNeeded}</b> class
+              <b className="font-bold text-yellow-400">{classesNeeded}</b> class
               {classesNeeded !== 1 && "es"} in a row
             </span>
           )}
