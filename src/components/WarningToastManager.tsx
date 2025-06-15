@@ -42,11 +42,12 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
 
     if (lastAlertZone.current[subjectId] !== zone) {
       if (zone === "danger") {
-        // SOLID RED TOAST (destructive variant) for danger
+        // LIGHT RED TOAST for danger (using default variant with custom styles)
         toast({
           title: "Danger zone!",
           description: `You are BELOW the minimum attendance in ${subjectName} (${percentage}%/${minPercentage}%).`,
-          variant: "destructive", // Red background
+          variant: "default",
+          className: "bg-red-100 text-red-800 border-red-200",
         });
       } else if (zone === "warn") {
         // Subtle/default for warning only
@@ -64,4 +65,3 @@ const WarningToastManager: React.FC<Props> = ({ recentAlert }) => {
 };
 
 export default WarningToastManager;
-
