@@ -1,7 +1,7 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Circle } from "lucide-react";
 
 type Subject = {
   name: string;
@@ -15,11 +15,8 @@ export const AttendanceCard: React.FC<{
   onUpdate: (subject: Subject) => void;
 }> = ({ subject, minPercentage, onUpdate }) => {
   const { name, attended, total } = subject;
-  const percentage =
-    total > 0 ? Math.round((attended / total) * 100) : 0;
+  const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
   const isAboveMin = percentage >= minPercentage;
-
-  // Calculate how many more classes needed to reach requirement
   let classesNeeded = 0;
   if (percentage < minPercentage) {
     const needed =
@@ -28,47 +25,76 @@ export const AttendanceCard: React.FC<{
           ? 0
           : total + 1 - attended
         : Math.ceil(
-            (minPercentage * total - 100 * attended) /
-              (100 - minPercentage)
+            (minPercentage * total - 100 * attended) / (100 - minPercentage)
           );
     classesNeeded = Math.max(needed, 0);
   }
 
+  // Pastel ring color
+  const ringColor = isAboveMin
+    ? "#8fbc8f" // sage
+    : percentage > minPercentage - 10
+    ? "#ffd59e" // soft amber
+    : "#ffb3b3"; // light red
+
+  // Animate percentage (CSS transitions for width/appearance)
   return (
-    <Card className="flex flex-col group transition-all duration-500">
+    <Card className="flex flex-col group transition-all duration-500 shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl font-extrabold tracking-wider drop-shadow-md text-white/90">
+        <CardTitle className="text-xl font-semibold tracking-wide text-foreground/90">
           {name}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>
-            <strong className="text-lg font-semibold text-white/80">{attended}</strong>
-            <span className="text-white/50"> / </span>
-            <strong className="text-lg font-semibold text-white/80">{total}</strong>
-            <span className="ml-1 text-white/60">classes</span>
+            <strong className="text-lg font-semibold text-foreground/80">{attended}</strong>
+            <span className="text-foreground/40"> / </span>
+            <strong className="text-lg font-semibold text-foreground/80">{total}</strong>
+            <span className="ml-1 text-foreground/50">classes</span>
           </span>
         </div>
-        <div className="flex items-center justify-center my-2">
-          {/* Animated-gradient percentage number, large */}
+        <div className="flex items-center justify-center my-4 relative">
+          <svg width="72" height="72" viewBox="0 0 72 72" className="block">
+            <circle
+              cx="36"
+              cy="36"
+              r="30"
+              fill="none"
+              stroke="#e4e7ec"
+              strokeWidth="9"
+              opacity={0.6}
+            />
+            <circle
+              cx="36"
+              cy="36"
+              r="30"
+              fill="none"
+              stroke={ringColor}
+              strokeWidth="9"
+              strokeDasharray={2 * Math.PI * 30}
+              strokeDashoffset={
+                2 * Math.PI * 30 * (1 - Math.min(percentage, 100) / 100)
+              }
+              strokeLinecap="round"
+              style={{
+                transition: "stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1), stroke 0.3s",
+                filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.07))"
+              }}
+            />
+          </svg>
           <span
-            className={
-              "text-4xl md:text-5xl font-black bg-gradient-to-tr " +
-              (isAboveMin
-                ? "from-[#2fff7f] via-[#30feea] to-[#55aaff] text-transparent bg-clip-text"
-                : "from-[#ff4f64] via-[#ffcb3b] to-[#fee440] text-transparent bg-clip-text animate-pulse")
-            }
-            style={{ transition: "color 0.5s, background 0.5s" }}
+            className="absolute inset-0 flex items-center justify-center text-3xl font-black text-foreground/80"
+            style={{ fontVariantNumeric: "tabular-nums" }}
           >
             {percentage}%
           </span>
         </div>
-        <div className="flex gap-4 mt-4">
+        <div className="flex gap-3 mt-2">
           <Button
             variant="default"
             size="lg"
-            className="flex-1 shadow-xl"
+            className="flex-1 shadow"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -82,7 +108,7 @@ export const AttendanceCard: React.FC<{
           <Button
             variant="secondary"
             size="lg"
-            className="flex-1 shadow-xl"
+            className="flex-1 shadow"
             onClick={() =>
               onUpdate({
                 ...subject,
@@ -93,15 +119,16 @@ export const AttendanceCard: React.FC<{
             Missed
           </Button>
         </div>
-        <div className="mt-6 text-xs font-medium">
+        <div className="mt-4 text-xs font-medium">
           {isAboveMin ? (
-            <span className="text-green-300/80">
-              <span className="inline-block animate-pulse">✔</span> Above minimum attendance ({minPercentage}%)
+            <span className="text-[hsl(var(--success))] flex items-center gap-2">
+              <Circle className="w-5 h-5 text-[hsl(var(--success))]" strokeWidth={2} /> Above minimum attendance ({minPercentage}%)
             </span>
           ) : (
-            <span className="text-yellow-200 bg-yellow-900/20 rounded px-2 py-1">
+            <span className="text-[hsl(var(--warning))] bg-[hsl(var(--warning),.09)] rounded px-2 py-1 flex items-center gap-2 animate-pulse-slow">
+              <Circle className="w-5 h-5 text-[hsl(var(--warning))]" strokeWidth={2} />
               To reach {minPercentage}%, attend next{" "}
-              <b className="font-bold text-yellow-400">{classesNeeded}</b> class
+              <b className="font-bold text-[hsl(var(--warning))]">{classesNeeded}</b> class
               {classesNeeded !== 1 && "es"} in a row
             </span>
           )}

@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AttendanceCard } from "@/components/AttendanceCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Subject = {
   name: string;
@@ -83,22 +83,20 @@ const Index = () => {
   // Only show setup form if attendance state hasn't been set
   if (!attendance) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-2 bg-gradient-to-br from-[#101c2c] via-[#111620] to-[#2a003f]">
-        <Card className="w-full max-w-lg mx-auto glass-card border-0 shadow-2xl backdrop-blur-2xl">
+      <div className="min-h-screen flex items-center justify-center px-2 bg-background transition-all duration-300">
+        <Card className="w-full max-w-lg mx-auto glass-card shadow-md border-0">
           <CardHeader>
-            <CardTitle className="text-center text-3xl font-extrabold bg-gradient-to-tr from-[#6a5cff] via-[#30feea] to-[#01f9c6] bg-clip-text text-transparent drop-shadow-lg tracking-tight">
-              Attendance Tracker Setup
-            </CardTitle>
+            <CardTitle className="text-center text-2xl font-bold text-foreground mb-3">Attendance Setup</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-4">
-                <label className="block font-bold text-white/70 mb-1 tracking-wide text-lg">Subjects</label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-3">
+                <label className="block font-semibold text-foreground/80 mb-1">Subjects</label>
                 <div className="space-y-2">
                   {form.subjects.map((subject, idx) => (
                     <div
                       key={idx}
-                      className="flex flex-col sm:flex-row gap-2 items-stretch mb-1 transition-all duration-300"
+                      className="flex flex-col sm:flex-row gap-2 items-stretch mb-1"
                     >
                       <Input
                         placeholder="Subject name"
@@ -106,7 +104,7 @@ const Index = () => {
                         onChange={(e) =>
                           handleSubjectChange(idx, "name", e.target.value)
                         }
-                        className="flex-1 glass-card bg-white/5 border-[hsla(var(--card-glass-border),0.12)] placeholder:text-white/50 text-white font-medium shadow-inner focus:shadow-glass focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="flex-1 bg-card/90 border border-input rounded-md focus:focus-soft placeholder:text-foreground/30 text-foreground"
                       />
                       <Input
                         type="number"
@@ -116,7 +114,7 @@ const Index = () => {
                         onChange={(e) =>
                           handleSubjectChange(idx, "attended", e.target.value)
                         }
-                        className="w-24 glass-card bg-white/5 border-[hsla(var(--card-glass-border),0.12)] placeholder:text-white/50 text-white font-medium shadow-inner focus:shadow-glass focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="w-20 bg-card/90 border border-input rounded-md focus:focus-soft placeholder:text-foreground/30 text-foreground"
                       />
                       <Input
                         type="number"
@@ -126,7 +124,7 @@ const Index = () => {
                         onChange={(e) =>
                           handleSubjectChange(idx, "total", e.target.value)
                         }
-                        className="w-24 glass-card bg-white/5 border-[hsla(var(--card-glass-border),0.12)] placeholder:text-white/50 text-white font-medium shadow-inner focus:shadow-glass focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="w-20 bg-card/90 border border-input rounded-md focus:focus-soft placeholder:text-foreground/30 text-foreground"
                       />
                       {form.subjects.length > 1 && (
                         <Button
@@ -147,13 +145,13 @@ const Index = () => {
                   type="button"
                   variant="outline"
                   onClick={addSubject}
-                  className="w-full border-0 bg-gradient-to-tr from-[#6a5cff] via-[#30feea] to-[#01f9c6] text-white/90 shadow hover:brightness-125 transition-all"
+                  className="w-full border-0 bg-gradient-to-tr from-[hsl(var(--accent))] to-[hsl(var(--accent2))] text-foreground shadow hover:brightness-110"
                 >
                   + Add Subject
                 </Button>
               </div>
               <div>
-                <label className="block font-bold mb-1 tracking-wide text-white/70 text-lg">
+                <label className="block font-bold mb-1 text-foreground/80">
                   Minimum Attendance (%)
                 </label>
                 <Input
@@ -170,10 +168,10 @@ const Index = () => {
                       ),
                     }))
                   }
-                  className="w-32 glass-card bg-white/5 border-[hsla(var(--card-glass-border),0.12)] placeholder:text-white/50 text-white font-semibold shadow-inner focus:shadow-glass focus:ring-2 focus:ring-primary focus:outline-none"
+                  className="w-28 bg-card/90 border border-input rounded focus:focus-soft text-foreground font-semibold"
                 />
               </div>
-              <Button type="submit" className="w-full h-14 text-2xl font-extrabold shadow-xl">
+              <Button type="submit" className="w-full h-12 text-xl font-bold shadow group">
                 Start Tracking
               </Button>
             </form>
@@ -200,14 +198,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#050d1d] via-[#0b1123] to-[#32005a] px-2 py-8 flex flex-col transition-colors duration-500">
-      <header className="mb-8 flex items-center justify-between max-w-3xl w-full mx-auto">
-        <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight bg-gradient-to-tr from-[#30feea] via-[#60a9fa] to-[#d08ffe] bg-clip-text text-transparent drop-shadow-xl">
-          Attendance Tracker
-        </h1>
-        <Button variant="outline" onClick={resetAll} size="sm" className="bg-white/10 border-0 text-white hover:bg-white/20">
-          Reset
-        </Button>
+    <div className="min-h-screen bg-background px-3 py-8 flex flex-col transition-colors duration-300">
+      <header className="mb-8 flex items-center justify-between max-w-3xl w-full mx-auto px-1">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">Attendance Tracker</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={resetAll} size="sm" className="bg-card/80 text-foreground border border-divider hover:bg-card">
+            Reset
+          </Button>
+          <ThemeToggle />
+        </div>
       </header>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-3xl w-full mx-auto">
         {attendance.map((subject, idx) => (
@@ -220,7 +219,7 @@ const Index = () => {
         ))}
       </div>
       <footer className="mt-auto pt-6 pb-2 text-center text-muted-foreground text-xs">
-        <span className="text-white/40">Made with Lovable · No data is saved after closing this tab.</span>
+        <span className="text-foreground/40">Made with Lovable · No data is saved after closing this tab.</span>
       </footer>
     </div>
   );

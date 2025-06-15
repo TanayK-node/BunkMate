@@ -1,109 +1,103 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
-
 @layer base {
   :root {
-    --background: 229 45% 8%;      /* deep navy */
-    --foreground: 222.2 84% 4.9%;
+    /* Light theme base */
+    --background: 220 30% 98%; /* #f8f9fa */
+    --foreground: 222 23% 15%; /* calm dark text */
 
-    --card: 224 33% 16%;           /* dark glass card */
-    --card-foreground: 210 40% 98%;
+    --card: 218 29% 96%;       /* #e9ecef */
+    --card-foreground: 222 23% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --accent: 153 34% 66%;     /* sage green #8fbc8f */
+    --accent2: 199 58% 81%;    /* soft blue #87ceeb */
+    --accent3: 2 100% 80%;     /* coral #ff7f7f */
+    --accent-purple: 260 23% 75%; /* pastel purple #b19cd9 */
+    --accent-teal: 182 25% 49%;   /* muted teal #5f9ea0 */
+    --accent-amber: 43 74% 59%;   /* warm amber #daa520 */
 
-    --primary: 265 89% 65%;        /* neon purple/blue accent */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --success: 137 35% 64%;    /* pastel green */
+    --warning: 24 56% 72%;     /* soft orange */
+    --danger: 2 82% 65%;       /* soft red */
 
-    --secondary: 156 74% 49%;      /* neon green accent */
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --border: 221 18% 84%;     /* very soft gray border */
+    --input: 221 18% 91%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --radius: 0.75rem; /* 12px */
+    --shadow: 0 4px 24px 0 hsla(218, 29%, 72%, 0.08);
+    --shadow-md: 0 8px 32px 0 hsla(218, 29%, 50%, 0.10);
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --divider: 221 16% 92%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --card-glass-border: 215 28% 53%;
-    --card-glass-bg: hsla(224, 40%, 16%, 0.72);
-
-    --radius: 1.2rem; /* bump for more roundness */
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --transition: background 0.3s cubic-bezier(0.4,0,0.2,1),
+      color 0.3s cubic-bezier(0.4,0,0.2,1),
+      border-color 0.3s cubic-bezier(0.4,0,0.2,1);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 230 12% 11%;          /* #1a1a1a */
+    --foreground: 220 28% 90%;          /* nearly white text */
+    --card: 230 12% 18%;                /* #2d2d2d */
+    --card-foreground: 220 28% 90%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --accent: 260 24% 75%;     /* soft purple #b19cd9 */
+    --accent2: 182 25% 49%;    /* muted teal #5f9ea0 */
+    --accent3: 43 74% 59%;     /* warm amber #daa520 */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --success: 137 17% 35%;
+    --warning: 30 35% 52%;
+    --danger: 3 48% 54%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --border: 228 12% 26%;         /* soft border in dark */
+    --input: 228 16% 34%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --divider: 228 12% 24%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+    --shadow: 0 4px 24px 0 hsla(230, 12%, 8%, 0.12);
+    --shadow-md: 0 8px 32px 0 hsla(230, 12%, 20%, 0.14);
+    --radius: 0.75rem;
+    --transition: background 0.3s cubic-bezier(0.4,0,0.2,1),
+      color 0.3s cubic-bezier(0.4,0,0.2,1),
+      border-color 0.3s cubic-bezier(0.4,0,0.2,1);
   }
 
   body {
-    @apply bg-background text-card-foreground font-sans;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: var(--transition);
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    font-feature-settings: "ss01" on, "ss03" on;
     letter-spacing: 0.01em;
+    min-height: 100vh;
+    overscroll-behavior-y: none;
+  }
+
+  * {
+    @apply border-border;
+    transition: var(--transition);
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: hsla(var(--card), 0.8);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    backdrop-filter: blur(8px);
+    transition: var(--transition);
+  }
+  .divider {
+    background: hsl(var(--divider));
+    height: 1px;
+    margin: 1rem 0;
+    opacity: 0.7;
+  }
+  .focus-soft {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--accent))33, 0 2px 12px 0 hsla(var(--accent), 0.07);
+    transition: box-shadow 0.3s cubic-bezier(0.4,0,0.2,1);
   }
 }
