@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    console.log('Attempting signup for:', email, 'with fullName:', fullName);
+    console.log('Attempting signup for:', email);
     
     try {
       const redirectUrl = `${window.location.origin}/email-confirmed`;
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
+          emailRedirectTo: redirectUrl
           data: {
             full_name: fullName || ''
           }
