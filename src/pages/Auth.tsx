@@ -16,6 +16,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
 
+  console.log('Auth component rendered, user:', user?.email);
+
   // Redirect if already authenticated
   if (user) {
     return <Navigate to="/" replace />;
@@ -29,12 +31,15 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
+    console.log('Form signin attempt:', email);
+
     const { error } = await signIn(email, password);
     
     if (error) {
+      console.error('Signin form error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An error occurred during sign in",
         variant: "destructive",
       });
     } else {
@@ -55,12 +60,15 @@ const Auth = () => {
     const password = formData.get('password') as string;
     const fullName = formData.get('fullName') as string;
 
+    console.log('Form signup attempt:', email, fullName);
+
     const { error } = await signUp(email, password, fullName);
     
     if (error) {
+      console.error('Signup form error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An error occurred during sign up",
         variant: "destructive",
       });
     } else {
