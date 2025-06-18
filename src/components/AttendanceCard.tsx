@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,22 @@ export const AttendanceCard: React.FC<{
   const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
   const isBelowMin = percentage < minPercentage;
   const isWarning = !isBelowMin && percentage < minPercentage + 5;
+
+  // Calculate bunkable classes using the exact formula
+  const calculateBunkableClasses = () => {
+    if (percentage <= 75 || total === 0) return 0;
+    
+    const present = attended;
+    const totalClasses = total;
+    
+    // Apply the formula: (Present - (0.75 * Total)) / 0.75
+    const bunkableClasses = Math.floor((present - (0.75 * totalClasses)) / 0.75);
+    
+    // Ensure non-negative result
+    return Math.max(0, bunkableClasses);
+  };
+
+  const bunkableClasses = calculateBunkableClasses();
 
   // For toast manager: emit on mount & when attendance changes
   React.useEffect(() => {
@@ -182,6 +199,22 @@ export const AttendanceCard: React.FC<{
               {total}
             </strong>
             <span className="ml-1 text-foreground/40">classes attended</span>
+          </div>
+          {/* Bunk Calculator Display */}
+          <div className="text-sm font-medium mt-2">
+            {percentage > 75 ? (
+              <span className={`${bunkableClasses > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {percentage.toFixed(1)}% attendance • 
+                {bunkableClasses > 0 
+                  ? ` Can bunk ${bunkableClasses} more class${bunkableClasses !== 1 ? 'es' : ''}` 
+                  : ' No more bunks available'
+                }
+              </span>
+            ) : (
+              <span className="text-foreground/70">
+                {percentage.toFixed(1)}% attendance
+              </span>
+            )}
           </div>
         </div>
         <div className="flex gap-2 mt-1">
