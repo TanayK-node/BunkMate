@@ -22,6 +22,8 @@ export const useFriends = () => {
     if (!user) return;
 
     try {
+      console.log('Fetching friends for user:', user.id);
+      
       const { data, error } = await supabase
         .from('friends')
         .select(`
@@ -33,7 +35,12 @@ export const useFriends = () => {
         `)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching friends:', error);
+        throw error;
+      }
+
+      console.log('Friends data received:', data);
 
       const formattedFriends: Friend[] = data?.map(friend => ({
         id: friend.id,
@@ -43,8 +50,10 @@ export const useFriends = () => {
         added_at: friend.added_at
       })) || [];
 
+      console.log('Formatted friends:', formattedFriends);
       setFriends(formattedFriends);
     } catch (error: any) {
+      console.error('Friends fetch error:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -59,17 +68,37 @@ export const useFriends = () => {
     if (!user) return;
 
     try {
+      console.log('Adding friend with ID:', friendUniqueId);
+      
+      // Normalize the input - trim whitespace and ensure it's exactly 5 digits
+      const normalizedId = friendUniqueId.trim();
+      
+      // Validate format - must be exactly 5 digits
+      if (!/^\d{5}$/.test(normalizedId)) {
+        toast({
+          title: "Invalid format",
+          description: "Friend code must be exactly 5 digits (e.g., 12345)",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Searching for user with unique_id:', normalizedId);
+
       // First, find the friend by unique_id
       const { data: friendProfile, error: findError } = await supabase
         .from('profiles')
         .select('id, full_name, unique_id')
-        .eq('unique_id', friendUniqueId)
+        .eq('unique_id', normalizedId)
         .single();
 
-      if (findError) {
+      console.log('Friend search result:', friendProfile, findError);
+
+      if (findError || !friendProfile) {
+        console.error('Friend not found:', findError);
         toast({
-          title: "Friend not found",
-          description: "No user found with that ID.",
+          title: "User not found",
+          description: "No user found with friend code: " + normalizedId,
           variant: "destructive",
         });
         return;
@@ -102,6 +131,8 @@ export const useFriends = () => {
         return;
       }
 
+      console.log('Adding friend to database...');
+
       // Add friend
       const { error: addError } = await supabase
         .from('friends')
@@ -111,7 +142,12 @@ export const useFriends = () => {
           friend_name: friendProfile.full_name || 'Unknown User'
         });
 
-      if (addError) throw addError;
+      if (addError) {
+        console.error('Error adding friend:', addError);
+        throw addError;
+      }
+
+      console.log('Friend added successfully');
 
       toast({
         title: "Success",
@@ -120,9 +156,10 @@ export const useFriends = () => {
 
       fetchFriends();
     } catch (error: any) {
+      console.error('Add friend error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to add friend",
         variant: "destructive",
       });
     }
@@ -132,6 +169,8 @@ export const useFriends = () => {
     if (!user) return;
 
     try {
+      console.log('Removing friend with ID:', friendId);
+      
       const { error } = await supabase
         .from('friends')
         .delete()
@@ -147,6 +186,7 @@ export const useFriends = () => {
 
       fetchFriends();
     } catch (error: any) {
+      console.error('Remove friend error:', error);
       toast({
         title: "Error",
         description: error.message,

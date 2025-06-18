@@ -48,45 +48,6 @@ export type Database = {
           },
         ]
       }
-      friends: {
-        Row: {
-          added_at: string | null
-          friend_id: string | null
-          friend_name: string | null
-          id: string
-          user_id: string | null
-        }
-        Insert: {
-          added_at?: string | null
-          friend_id?: string | null
-          friend_name?: string | null
-          id?: string
-          user_id?: string | null
-        }
-        Update: {
-          added_at?: string | null
-          friend_id?: string | null
-          friend_name?: string | null
-          id?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "friends_friend_id_fkey"
-            columns: ["friend_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friends_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           created_at: string | null
