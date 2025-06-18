@@ -4,14 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Copy, UserPlus, Trash2, User } from 'lucide-react';
+import { Copy, UserPlus, Trash2, User, Eye } from 'lucide-react';
 import { useFriends } from '@/hooks/useFriends';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
+import { FriendAttendanceView } from '@/components/FriendAttendanceView';
 
 export const FriendsTab: React.FC = () => {
   const [friendId, setFriendId] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<{id: string, name: string} | null>(null);
   const { friends, loading, addFriend, removeFriend } = useFriends();
   const { profile } = useProfile();
   const { toast } = useToast();
@@ -21,13 +23,20 @@ export const FriendsTab: React.FC = () => {
       navigator.clipboard.writeText(profile.unique_id);
       toast({
         title: "Copied!",
-        description: "Your ID has been copied to clipboard.",
+        description: "Your friend code has been copied to clipboard.",
       });
     }
   };
 
   const handleAddFriend = async () => {
-    if (!friendId.trim()) return;
+    if (!friendId.trim()) {
+      toast({
+        title: "Invalid input",
+        description: "Please enter a friend code.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsAdding(true);
     await addFriend(friendId.trim());
@@ -41,6 +50,36 @@ export const FriendsTab: React.FC = () => {
     }
   };
 
+  const handleViewAttendance = (friend: {id: string, friend_id: string, friend_name: string}) => {
+    setSelectedFriend({
+      id: friend.friend_id,
+      name: friend.friend_name
+    });
+  };
+
+  const handleBackToFriends = () => {
+    setSelectedFriend(null);
+  };
+
+  // Handle input change with validation
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow digits and limit to 5 characters
+    if (/^\d{0,5}$/.test(value)) {
+      setFriendId(value);
+    }
+  };
+
+  if (selectedFriend) {
+    return (
+      <FriendAttendanceView
+        friendId={selectedFriend.id}
+        friendName={selectedFriend.name}
+        onBack={handleBackToFriends}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* User ID Card */}
@@ -48,7 +87,7 @@ export const FriendsTab: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
-            Your ID
+            Your Friend Code
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -67,7 +106,7 @@ export const FriendsTab: React.FC = () => {
             </Button>
           </div>
           <p className="text-sm text-gray-500 mt-2">
-            Share this ID with friends so they can add you
+            Share this 5-digit code with friends so they can add you
           </p>
         </CardContent>
       </Card>
@@ -81,20 +120,25 @@ export const FriendsTab: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter friend's 5-digit ID (e.g., 47293)"
-              value={friendId}
-              onChange={(e) => setFriendId(e.target.value)}
-              maxLength={5}
-              className="flex-1"
-            />
-            <Button
-              onClick={handleAddFriend}
-              disabled={isAdding || !friendId.trim()}
-            >
-              {isAdding ? 'Adding...' : 'Add'}
-            </Button>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter 5-digit friend code"
+                value={friendId}
+                onChange={handleInputChange}
+                maxLength={5}
+                className="flex-1 font-mono"
+              />
+              <Button
+                onClick={handleAddFriend}
+                disabled={isAdding || friendId.length !== 5}
+              >
+                {isAdding ? 'Adding...' : 'Add'}
+              </Button>
+            </div>
+            <p className="text-xs text-gray-500">
+              Example: 47293 (exactly 5 digits)
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -114,7 +158,7 @@ export const FriendsTab: React.FC = () => {
             <div className="text-center py-8">
               <p className="text-gray-500">No friends added yet</p>
               <p className="text-sm text-gray-400 mt-1">
-                Add friends by their 5-digit ID to see their attendance
+                Add friends using their 5-digit friend code
               </p>
             </div>
           ) : (
@@ -131,14 +175,24 @@ export const FriendsTab: React.FC = () => {
                         <p className="text-sm text-gray-500">#{friend.unique_id}</p>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleRemoveFriend(friend.id, friend.friend_name)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewAttendance(friend)}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleRemoveFriend(friend.id, friend.friend_name)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                   {index < friends.length - 1 && <Separator />}
                 </div>

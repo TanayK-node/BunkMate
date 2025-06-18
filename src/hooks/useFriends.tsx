@@ -45,6 +45,7 @@ export const useFriends = () => {
 
       setFriends(formattedFriends);
     } catch (error: any) {
+      console.error('Error fetching friends:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -59,21 +60,39 @@ export const useFriends = () => {
     if (!user) return;
 
     try {
-      // First, find the friend by unique_id
-      const { data: friendProfile, error: findError } = await supabase
-        .from('profiles')
-        .select('id, full_name, unique_id')
-        .eq('unique_id', friendUniqueId)
-        .single();
-
-      if (findError) {
+      // Normalize input: trim whitespace and ensure consistent format
+      const normalizedId = friendUniqueId.trim().replace(/\s+/g, '');
+      
+      // Validate format (5 digits)
+      if (!/^\d{5}$/.test(normalizedId)) {
         toast({
-          title: "Friend not found",
-          description: "No user found with that ID.",
+          title: "Invalid format",
+          description: "Friend code must be exactly 5 digits (e.g., 47293)",
           variant: "destructive",
         });
         return;
       }
+
+      console.log('Searching for friend with ID:', normalizedId);
+
+      // First, find the friend by unique_id
+      const { data: friendProfile, error: findError } = await supabase
+        .from('profiles')
+        .select('id, full_name, unique_id')
+        .eq('unique_id', normalizedId)
+        .single();
+
+      if (findError || !friendProfile) {
+        console.log('Friend lookup error:', findError);
+        toast({
+          title: "Friend not found",
+          description: `No user found with friend code ${normalizedId}. Make sure the code is correct.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Found friend profile:', friendProfile);
 
       // Check if trying to add self
       if (friendProfile.id === user.id) {
@@ -120,9 +139,10 @@ export const useFriends = () => {
 
       fetchFriends();
     } catch (error: any) {
+      console.error('Error adding friend:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to add friend. Please try again.",
         variant: "destructive",
       });
     }
@@ -147,6 +167,7 @@ export const useFriends = () => {
 
       fetchFriends();
     } catch (error: any) {
+      console.error('Error removing friend:', error);
       toast({
         title: "Error",
         description: error.message,
