@@ -1,14 +1,11 @@
-
 import React, { useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AddSubjectDialog } from "@/components/AddSubjectDialog";
-import { FriendsTab } from "@/components/FriendsTab";
 import { useSubjects } from "@/hooks/useSubjects";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, User, BookOpen, Users } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import WarningToastManager from "@/components/WarningToastManager";
 
@@ -18,6 +15,7 @@ const Index = () => {
   const { subjects, loading: subjectsLoading, addSubject, updateSubject, deleteSubject } = useSubjects();
 
   // For real-time warning toasts
+  // We'll call setAlert each time a card triggers a warning/danger
   const [recentAlert, setRecentAlert] = React.useState<{
     subjectId: string; subjectName: string; percentage: number; minPercentage: number;
   } | null>(null);
@@ -36,14 +34,11 @@ const Index = () => {
 
   // Redirect to auth if not logged in
   if (!user) {
-    console.log('No user found, redirecting to /auth');
     return <Navigate to="/auth" replace />;
   }
 
   const handleSignOut = async () => {
-    console.log('Sign out button clicked');
     await signOut();
-    // Navigation will happen automatically via the useAuth hook
   };
 
   const handleAddSubject = (
@@ -93,68 +88,46 @@ const Index = () => {
             Your Attendance Tracker
           </h2>
           <p className="text-gray-600">
-            Keep track of your class attendance and connect with friends
+            Keep track of your class attendance and stay above the minimum requirement
           </p>
         </div>
 
-        {/* Tab Navigation */}
-        <Tabs defaultValue="attendance" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="attendance" className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              My Attendance
-            </TabsTrigger>
-            <TabsTrigger value="friends" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Friends
-            </TabsTrigger>
-          </TabsList>
+        {/* Add Subject Button */}
+        <div className="mb-6">
+          <AddSubjectDialog onAddSubject={handleAddSubject} />
+        </div>
 
-          {/* Attendance Tab */}
-          <TabsContent value="attendance" className="space-y-6">
-            {/* Add Subject Button */}
-            <div className="mb-6">
-              <AddSubjectDialog onAddSubject={handleAddSubject} />
+        {/* Subjects Grid */}
+        {subjectsLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading subjects...</p>
+          </div>
+        ) : subjects.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="bg-white rounded-lg shadow p-8">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No subjects yet
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Add your first subject to start tracking attendance
+              </p>
             </div>
-
-            {/* Subjects Grid */}
-            {subjectsLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading subjects...</p>
-              </div>
-            ) : subjects.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="bg-white rounded-lg shadow p-8">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No subjects yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Add your first subject to start tracking attendance
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                {subjects.map((subject) => (
-                  <AttendanceCard
-                    key={subject.id}
-                    subject={subject}
-                    minPercentage={subject.minimum_attendance}
-                    onUpdate={updateSubject}
-                    onDelete={deleteSubject}
-                    onAlertTrigger={setRecentAlert}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Friends Tab */}
-          <TabsContent value="friends">
-            <FriendsTab />
-          </TabsContent>
-        </Tabs>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            {subjects.map((subject) => (
+              <AttendanceCard
+                key={subject.id}
+                subject={subject}
+                minPercentage={subject.minimum_attendance}
+                onUpdate={updateSubject}
+                onDelete={deleteSubject}
+                onAlertTrigger={setRecentAlert}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       <Toaster />

@@ -4,10 +4,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
+import { Plus, Info } from 'lucide-react';
 
 interface AddSubjectDialogProps {
-  onAddSubject: (name: string, minAttendance: number, attended: number, total: number) => void;
+  onAddSubject: (name: string, minAttendance: number, attended: number, total: number, totalSemesterLectures?: number | null) => void;
 }
 
 export const AddSubjectDialog: React.FC<AddSubjectDialogProps> = ({ onAddSubject }) => {
@@ -16,15 +16,23 @@ export const AddSubjectDialog: React.FC<AddSubjectDialogProps> = ({ onAddSubject
   const [minAttendance, setMinAttendance] = useState(75);
   const [attended, setAttended] = useState(0);
   const [total, setTotal] = useState(0);
+  const [totalSemester, setTotalSemester] = useState<number | ''>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onAddSubject(name.trim(), minAttendance, attended, total);
+      onAddSubject(
+        name.trim(),
+        minAttendance,
+        attended,
+        total,
+        totalSemester === '' ? null : Number(totalSemester)
+      );
       setName('');
       setMinAttendance(75);
       setAttended(0);
       setTotal(0);
+      setTotalSemester('');
       setOpen(false);
     }
   };
@@ -90,6 +98,23 @@ export const AddSubjectDialog: React.FC<AddSubjectDialogProps> = ({ onAddSubject
               value={total}
               onChange={(e) => setTotal(Number(e.target.value))}
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="semester-total" className="flex items-center gap-1">
+              Total Semester Lectures
+              <span className="ml-1 text-xs text-gray-400 flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                (Optional - helps calculate safe absences)
+              </span>
+            </Label>
+            <Input
+              id="semester-total"
+              type="number"
+              min="0"
+              placeholder="e.g. 45"
+              value={totalSemester}
+              onChange={(e) => setTotalSemester(e.target.value === "" ? "" : Number(e.target.value))}
             />
           </div>
           <div className="flex gap-2">

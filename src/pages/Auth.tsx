@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -28,18 +29,15 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    console.log('Attempting sign in for:', email);
     const { error } = await signIn(email, password);
     
     if (error) {
-      console.error('Sign in error:', error);
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
     } else {
-      console.log('Sign in successful');
       toast({
         title: "Success",
         description: "Successfully signed in!",
@@ -57,18 +55,15 @@ const Auth = () => {
     const password = formData.get('password') as string;
     const fullName = formData.get('fullName') as string;
 
-    console.log('Form data:', { email, fullName });
     const { error } = await signUp(email, password, fullName);
     
     if (error) {
-      console.error('Sign up error details:', error);
       toast({
         title: "Error",
-        description: `Signup failed: ${error.message}`,
+        description: error.message,
         variant: "destructive",
       });
     } else {
-      console.log('Sign up successful');
       toast({
         title: "Success", 
         description: "Account created! Please check your email to verify your account.",

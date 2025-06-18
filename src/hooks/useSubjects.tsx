@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +9,7 @@ export type Subject = {
   attended: number;
   total: number;
   minimum_attendance: number;
+  total_semester_lectures?: number | null;
 };
 
 export const useSubjects = () => {
@@ -29,12 +29,18 @@ export const useSubjects = () => {
 
       if (error) throw error;
 
-      const formattedSubjects: Subject[] = data?.map(subject => ({
+      // NOTE: Supabase types may be outdated if you just ran a migration.
+      // Let's allow extra property 'total_semester_lectures' here until types are regenerated.
+      const formattedSubjects: Subject[] = (data as any[])?.map((subject: any) => ({
         id: subject.id,
         name: subject.name,
         attended: subject.classes_attended || 0,
         total: subject.total_classes || 0,
-        minimum_attendance: subject.minimum_attendance || 75
+        minimum_attendance: subject.minimum_attendance || 75,
+        total_semester_lectures:
+          typeof subject.total_semester_lectures !== "undefined"
+            ? subject.total_semester_lectures
+            : null,
       })) || [];
 
       setSubjects(formattedSubjects);
@@ -49,12 +55,13 @@ export const useSubjects = () => {
     }
   };
 
-  // Modified addSubject to accept attended and total params
+  // Modified addSubject to accept totalSemester param
   const addSubject = async (
     name: string,
     minAttendance: number = 75,
     attended: number = 0,
-    total: number = 0
+    total: number = 0,
+    totalSemesterLectures?: number | null
   ) => {
     if (!user) return;
 
@@ -66,19 +73,27 @@ export const useSubjects = () => {
           user_id: user.id,
           minimum_attendance: minAttendance,
           classes_attended: attended,
-          total_classes: total
+          total_classes: total,
+          ...(typeof totalSemesterLectures !== 'undefined'
+            ? { total_semester_lectures: totalSemesterLectures }
+            : {}),
         })
         .select()
         .single();
 
       if (error) throw error;
 
+      // Again, defensively typecast to any to access new column
       const newSubject: Subject = {
         id: data.id,
         name: data.name,
         attended: data.classes_attended || 0,
         total: data.total_classes || 0,
-        minimum_attendance: data.minimum_attendance || 75
+        minimum_attendance: data.minimum_attendance || 75,
+        total_semester_lectures:
+          typeof (data as any).total_semester_lectures !== "undefined"
+            ? (data as any).total_semester_lectures
+            : null,
       };
 
       setSubjects(prev => [...prev, newSubject]);
@@ -104,7 +119,10 @@ export const useSubjects = () => {
         .from('subjects')
         .update({
           classes_attended: updatedSubject.attended,
-          total_classes: updatedSubject.total
+          total_classes: updatedSubject.total,
+          ...(typeof updatedSubject.total_semester_lectures !== 'undefined'
+            ? { total_semester_lectures: updatedSubject.total_semester_lectures }
+            : {}),
         })
         .eq('id', updatedSubject.id)
         .eq('user_id', user.id);

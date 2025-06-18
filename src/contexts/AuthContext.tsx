@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,10 +27,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener first
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -39,59 +37,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // Check for existing session
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting session:', error);
-        } else {
-          console.log('Initial session:', session?.user?.email);
-          setSession(session);
-          setUser(session?.user ?? null);
-        }
-      } catch (error) {
-        console.error('Error in getInitialSession:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    console.log('Attempting signup for:', email, 'with name:', fullName);
+    const redirectUrl = `${window.location.origin}/email-confirmed`;
     
-    try {
-      // Don't use email confirmation for now to avoid the trigger issue
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName || ''
-          }
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          full_name: fullName || ''
         }
-      });
-      
-      console.log('Signup response:', { data, error });
-      
-      if (error) {
-        console.error('Signup error:', error);
-        return { error };
       }
-      
-      if (data.user && !data.user.email_confirmed_at) {
-        console.log('User created but email not confirmed, signup successful');
-      }
-      
-      return { error: null };
-    } catch (err) {
-      console.error('Unexpected signup error:', err);
-      return { error: err };
-    }
+    });
+    return { error };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -103,20 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    try {
-      console.log('Signing out...');
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Sign out error:', error);
-      } else {
-        console.log('Successfully signed out');
-        // Clear local state immediately
-        setSession(null);
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Unexpected error during sign out:', error);
-    }
+    await supabase.auth.signOut();
   };
 
   const value = {
