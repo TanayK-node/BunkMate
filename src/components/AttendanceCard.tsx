@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,22 @@ export const AttendanceCard: React.FC<{
   const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
   const isBelowMin = percentage < minPercentage;
   const isWarning = !isBelowMin && percentage < minPercentage + 5;
+
+  // Calculate bunkable classes using the exact formula
+  const calculateBunkableClasses = () => {
+    if (percentage <= 75) return 0;
+    
+    const present = attended;
+    const totalClasses = total;
+    
+    // Apply the formula: (Present - (0.75 * Total)) / 0.75
+    const bunkableClasses = Math.floor((present - (0.75 * totalClasses)) / 0.75);
+    
+    // Ensure non-negative result
+    return Math.max(0, bunkableClasses);
+  };
+
+  const bunkableClasses = calculateBunkableClasses();
 
   // For toast manager: emit on mount & when attendance changes
   React.useEffect(() => {
@@ -213,8 +230,29 @@ export const AttendanceCard: React.FC<{
             Missed
           </Button>
         </div>
+        
+        {/* New Bunk Calculator Display */}
+        <div className="mt-2 text-sm font-medium">
+          {percentage > 75 ? (
+            <div className={`flex items-center gap-2 ${bunkableClasses > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <span>{percentage.toFixed(1)}% attendance</span>
+              <span className="text-gray-400">•</span>
+              <span>
+                {bunkableClasses > 0 
+                  ? `Can bunk ${bunkableClasses} more ${bunkableClasses === 1 ? 'class' : 'classes'}`
+                  : 'No more bunks available'
+                }
+              </span>
+            </div>
+          ) : (
+            <span className="text-red-600">
+              {percentage.toFixed(1)}% attendance
+            </span>
+          )}
+        </div>
+
         <div className="mt-2 text-xs font-medium">
-          {!isBelowMin && !isWarning && (
+          {!isBelowMin && !isWarning && percentage <= 75 && (
             <span className="text-[hsl(var(--success))] flex items-center gap-2">
               <Circle
                 className="w-5 h-5 text-[hsl(var(--success))]"
