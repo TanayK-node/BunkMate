@@ -36,11 +36,14 @@ const Index = () => {
 
   // Redirect to auth if not logged in
   if (!user) {
+    console.log('No user found, redirecting to /auth');
     return <Navigate to="/auth" replace />;
   }
 
   const handleSignOut = async () => {
+    console.log('Sign out button clicked');
     await signOut();
+    // Navigation will happen automatically via the useAuth hook
   };
 
   const handleAddSubject = (
