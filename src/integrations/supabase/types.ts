@@ -54,18 +54,21 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          unique_id: string | null
         }
         Insert: {
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id: string
+          unique_id?: string | null
         }
         Update: {
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          unique_id?: string | null
         }
         Relationships: []
       }
@@ -112,7 +115,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
