@@ -65,26 +65,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('Attempting signup for:', email, 'with name:', fullName);
     
     try {
-      const redirectUrl = `${window.location.origin}/email-confirmed`;
-      console.log('Using redirect URL:', redirectUrl);
-      
+      // Don't use email confirmation for now to avoid the trigger issue
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName || ''
           }
         }
       });
       
-      console.log('Signup response data:', data);
+      console.log('Signup response:', { data, error });
+      
       if (error) {
         console.error('Signup error:', error);
+        return { error };
       }
       
-      return { error };
+      if (data.user && !data.user.email_confirmed_at) {
+        console.log('User created but email not confirmed, signup successful');
+      }
+      
+      return { error: null };
     } catch (err) {
       console.error('Unexpected signup error:', err);
       return { error: err };
