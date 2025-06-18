@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -51,8 +49,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `${window.location.origin}/email-confirmed`;
     
-    console.log('Attempting signup with:', { email, fullName });
-    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -63,30 +59,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     });
-    
-    if (error) {
-      console.error('Signup error:', error);
-    } else {
-      console.log('Signup successful');
-    }
-    
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
-    console.log('Attempting signin with:', email);
-    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
-    
-    if (error) {
-      console.error('Signin error:', error);
-    } else {
-      console.log('Signin successful');
-    }
-    
     return { error };
   };
 
