@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -231,22 +230,14 @@ export const AttendanceCard: React.FC<{
           </Button>
         </div>
         
-        {/* New Bunk Calculator Display */}
+        {/* Updated Bunk Calculator Display - Only show bunkable classes */}
         <div className="mt-2 text-sm font-medium">
-          {percentage > 75 ? (
-            <div className={`flex items-center gap-2 ${bunkableClasses > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              <span>{percentage.toFixed(1)}% attendance</span>
-              <span className="text-gray-400">•</span>
-              <span>
-                {bunkableClasses > 0 
-                  ? `Can bunk ${bunkableClasses} more ${bunkableClasses === 1 ? 'class' : 'classes'}`
-                  : 'No more bunks available'
-                }
-              </span>
-            </div>
-          ) : (
-            <span className="text-red-600">
-              {percentage.toFixed(1)}% attendance
+          {percentage > 75 && (
+            <span className={bunkableClasses > 0 ? 'text-green-600' : 'text-red-600'}>
+              {bunkableClasses > 0 
+                ? `Can bunk ${bunkableClasses} more ${bunkableClasses === 1 ? 'class' : 'classes'}`
+                : 'No more bunks available'
+              }
             </span>
           )}
         </div>
