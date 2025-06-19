@@ -47,7 +47,7 @@ $$ LANGUAGE plpgsql;
 -- Step 5: Create trigger that fires before INSERT
 DROP TRIGGER IF EXISTS trigger_assign_unique_id ON profiles;
 CREATE TRIGGER trigger_assign_unique_id
-    BEFORE INSERT ON profiles
+    AFTER INSERT ON profiles
     FOR EACH ROW
     EXECUTE FUNCTION assign_unique_id_to_new_user();
 
