@@ -1,4 +1,3 @@
-
 -- Step 1: Create function to generate unique 5-digit ID
 CREATE OR REPLACE FUNCTION generate_unique_id()
 RETURNS TEXT AS $$
@@ -8,7 +7,7 @@ DECLARE
 BEGIN
     LOOP
         -- Generate random 5-digit number (10000-99999)
-        new_id := LPAD((RANDOM() * 89999 + 10000)::INTEGER::TEXT, 5, '0');
+        new_id := LPAD((FLOOR(RANDOM() * 90000 + 10000))::TEXT, 5, '0');
         
         -- Check if ID already exists
         SELECT EXISTS(SELECT 1 FROM profiles WHERE unique_id = new_id) INTO id_exists;
@@ -18,12 +17,13 @@ BEGIN
             EXIT;
         END IF;
     END LOOP;
-    
+
     RETURN new_id;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Step 2: Populate unique_id for existing users who don't have one
+-- (Only run this after Step 1 succeeds)
 UPDATE profiles 
 SET unique_id = generate_unique_id() 
 WHERE unique_id IS NULL OR unique_id = '';
@@ -39,19 +39,20 @@ BEGIN
     IF NEW.unique_id IS NULL OR NEW.unique_id = '' THEN
         NEW.unique_id := generate_unique_id();
     END IF;
-    
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Step 5: Create trigger that fires before INSERT
+-- Step 5: Create trigger that fires BEFORE INSERT (not AFTER!)
 DROP TRIGGER IF EXISTS trigger_assign_unique_id ON profiles;
+
 CREATE TRIGGER trigger_assign_unique_id
-    AFTER INSERT ON profiles
+    BEFORE INSERT ON profiles
     FOR EACH ROW
     EXECUTE FUNCTION assign_unique_id_to_new_user();
 
--- Step 6: Update the handle_new_user function to work with the new system
+-- Step 6: Update the handle_new_user function (used in Supabase auth)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -61,8 +62,8 @@ BEGIN
     NEW.email, 
     COALESCE(NEW.raw_user_meta_data->>'full_name', '')
   );
-  -- unique_id will be auto-assigned by the trigger_assign_unique_id trigger
-  
+  -- unique_id will be auto-assigned by the trigger before insert
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
