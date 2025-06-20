@@ -51,24 +51,27 @@ export type Database = {
       friends: {
         Row: {
           added_at: string | null
-          friend_id: string
-          friend_name: string
+          friend_id: string | null
+          friend_name: string | null
           id: string
-          user_id: string
+          unique_id: string | null
+          user_id: string | null
         }
         Insert: {
           added_at?: string | null
-          friend_id: string
-          friend_name: string
+          friend_id?: string | null
+          friend_name?: string | null
           id?: string
-          user_id: string
+          unique_id?: string | null
+          user_id?: string | null
         }
         Update: {
           added_at?: string | null
-          friend_id?: string
-          friend_name?: string
+          friend_id?: string | null
+          friend_name?: string | null
           id?: string
-          user_id?: string
+          unique_id?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
