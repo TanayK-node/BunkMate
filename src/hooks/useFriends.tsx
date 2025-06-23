@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,7 +30,7 @@ export const useFriends = () => {
           id,
           friend_id,
           created_at,
-          friend_profile:profiles!friends_friend_id_fkey(
+          profiles!friend_id(
             id,
             full_name,
             friend_code
@@ -51,8 +50,8 @@ export const useFriends = () => {
       const formattedFriends: Friend[] = data?.map(friend => ({
         id: friend.id,
         friend_id: friend.friend_id,
-        friend_name: (friend.friend_profile as any)?.full_name || 'Unknown User',
-        friend_code: (friend.friend_profile as any)?.friend_code || '',
+        friend_name: (friend.profiles as any)?.full_name || 'Unknown User',
+        friend_code: (friend.profiles as any)?.friend_code || '',
         created_at: friend.created_at
       })) || [];
 
