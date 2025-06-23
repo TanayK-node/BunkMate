@@ -11,7 +11,7 @@ interface FriendAttendanceViewProps {
     id: string;
     friend_id: string;
     friend_name: string;
-    unique_id: string;
+    friend_code: string;
   };
   onBack: () => void;
 }
@@ -104,7 +104,7 @@ export const FriendAttendanceView: React.FC<FriendAttendanceViewProps> = ({ frie
           </div>
           <div>
             <h2 className="text-xl font-bold">{friend.friend_name}'s Attendance</h2>
-            <p className="text-sm text-gray-500 font-mono">Friend Code: #{friend.unique_id}</p>
+            <p className="text-sm text-gray-500 font-mono">Friend Code: #{friend.friend_code}</p>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ export type UserProfile = {
   id: string;
   email: string;
   full_name: string;
-  unique_id: string;
+  friend_code: string;
 };
 
 export const useProfile = () => {
@@ -41,7 +41,7 @@ export const useProfile = () => {
         id: data.id,
         email: data.email || '',
         full_name: data.full_name || '',
-        unique_id: data.unique_id || ''
+        friend_code: data.friend_code || ''
       });
     } catch (error) {
       console.error('Error fetching profile:', error);

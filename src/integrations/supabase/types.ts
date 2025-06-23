@@ -48,22 +48,64 @@ export type Database = {
           },
         ]
       }
+      friends: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friends_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
           email: string | null
+          friend_code: string
           full_name: string | null
           id: string
         }
         Insert: {
           created_at?: string | null
           email?: string | null
+          friend_code: string
           full_name?: string | null
           id: string
         }
         Update: {
           created_at?: string | null
           email?: string | null
+          friend_code?: string
           full_name?: string | null
           id?: string
         }
@@ -112,7 +154,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_friend_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

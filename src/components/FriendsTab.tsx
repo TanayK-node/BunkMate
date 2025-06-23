@@ -11,16 +11,16 @@ import { useToast } from '@/hooks/use-toast';
 import { FriendAttendanceView } from '@/components/FriendAttendanceView';
 
 export const FriendsTab: React.FC = () => {
-  const [friendId, setFriendId] = useState('');
+  const [friendCode, setFriendCode] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState<any>(null);
   const { friends, loading, addFriend, removeFriend } = useFriends();
   const { profile } = useProfile();
   const { toast } = useToast();
 
-  const handleCopyId = () => {
-    if (profile?.unique_id) {
-      navigator.clipboard.writeText(profile.unique_id);
+  const handleCopyCode = () => {
+    if (profile?.friend_code) {
+      navigator.clipboard.writeText(profile.friend_code);
       toast({
         title: "Copied!",
         description: "Your friend code has been copied to clipboard.",
@@ -29,7 +29,7 @@ export const FriendsTab: React.FC = () => {
   };
 
   const handleAddFriend = async () => {
-    if (!friendId.trim()) {
+    if (!friendCode.trim()) {
       toast({
         title: "Invalid input",
         description: "Please enter a friend code.",
@@ -39,8 +39,8 @@ export const FriendsTab: React.FC = () => {
     }
     
     setIsAdding(true);
-    await addFriend(friendId.trim());
-    setFriendId('');
+    await addFriend(friendCode.trim());
+    setFriendCode('');
     setIsAdding(false);
   };
 
@@ -63,7 +63,7 @@ export const FriendsTab: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
     if (value.length <= 5) {
-      setFriendId(value);
+      setFriendCode(value);
     }
   };
 
@@ -90,13 +90,13 @@ export const FriendsTab: React.FC = () => {
         <CardContent>
           <div className="flex items-center gap-3">
             <span className="text-2xl font-mono font-bold text-blue-600">
-              {profile?.unique_id || 'Loading...'}
+              {profile?.friend_code || 'Loading...'}
             </span>
             <Button
               variant="outline"
               size="sm"
-              onClick={handleCopyId}
-              disabled={!profile?.unique_id}
+              onClick={handleCopyCode}
+              disabled={!profile?.friend_code}
             >
               <Copy className="w-4 h-4 mr-1" />
               Copy
@@ -121,7 +121,7 @@ export const FriendsTab: React.FC = () => {
             <div className="flex gap-2">
               <Input
                 placeholder="Enter 5-digit friend code"
-                value={friendId}
+                value={friendCode}
                 onChange={handleInputChange}
                 maxLength={5}
                 className="flex-1 font-mono"
@@ -130,7 +130,7 @@ export const FriendsTab: React.FC = () => {
               />
               <Button
                 onClick={handleAddFriend}
-                disabled={isAdding || friendId.length !== 5}
+                disabled={isAdding || friendCode.length !== 5}
               >
                 {isAdding ? 'Adding...' : 'Add'}
               </Button>
@@ -138,7 +138,7 @@ export const FriendsTab: React.FC = () => {
             <p className="text-xs text-gray-500">
               Example: 12345 (exactly 5 digits)
             </p>
-            {friendId.length > 0 && friendId.length !== 5 && (
+            {friendCode.length > 0 && friendCode.length !== 5 && (
               <p className="text-xs text-red-500">
                 Friend code must be exactly 5 digits
               </p>
@@ -176,7 +176,7 @@ export const FriendsTab: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium">{friend.friend_name}</p>
-                        <p className="text-sm text-gray-500 font-mono">#{friend.unique_id}</p>
+                        <p className="text-sm text-gray-500 font-mono">#{friend.friend_code}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

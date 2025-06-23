@@ -8,8 +8,8 @@ export type Friend = {
   id: string;
   friend_id: string;
   friend_name: string;
-  unique_id: string;
-  added_at: string;
+  friend_code: string;
+  created_at: string;
 };
 
 export const useFriends = () => {
@@ -24,16 +24,21 @@ export const useFriends = () => {
     try {
       console.log('Fetching friends for user:', user.id);
       
+      // Query friends table and join with profiles to get friend details
       const { data, error } = await supabase
         .from('friends')
         .select(`
           id,
           friend_id,
-          friend_name,
-          added_at,
-          profiles!friends_friend_id_fkey(unique_id)
+          created_at,
+          friend_profile:profiles!friends_friend_id_fkey(
+            id,
+            full_name,
+            friend_code
+          )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('status', 'accepted');
 
       if (error) {
         console.error('Error fetching friends:', error);
@@ -42,12 +47,13 @@ export const useFriends = () => {
 
       console.log('Friends data received:', data);
 
+      // Transform the data to match our Friend type
       const formattedFriends: Friend[] = data?.map(friend => ({
         id: friend.id,
         friend_id: friend.friend_id,
-        friend_name: friend.friend_name,
-        unique_id: (friend.profiles as any)?.unique_id || '',
-        added_at: friend.added_at
+        friend_name: (friend.friend_profile as any)?.full_name || 'Unknown User',
+        friend_code: (friend.friend_profile as any)?.friend_code || '',
+        created_at: friend.created_at
       })) || [];
 
       console.log('Formatted friends:', formattedFriends);
@@ -64,17 +70,17 @@ export const useFriends = () => {
     }
   };
 
-  const addFriend = async (friendUniqueId: string) => {
+  const addFriend = async (friendCode: string) => {
     if (!user) return;
 
     try {
-      console.log('Adding friend with ID:', friendUniqueId);
+      console.log('Adding friend with code:', friendCode);
       
       // Normalize the input - trim whitespace and ensure it's exactly 5 digits
-      const normalizedId = friendUniqueId.trim();
+      const normalizedCode = friendCode.trim();
       
       // Validate format - must be exactly 5 digits
-      if (!/^\d{5}$/.test(normalizedId)) {
+      if (!/^\d{5}$/.test(normalizedCode)) {
         toast({
           title: "Invalid format",
           description: "Friend code must be exactly 5 digits (e.g., 12345)",
@@ -83,13 +89,13 @@ export const useFriends = () => {
         return;
       }
 
-      console.log('Searching for user with unique_id:', normalizedId);
+      console.log('Searching for user with friend_code:', normalizedCode);
 
-      // First, find the friend by unique_id
+      // First, find the friend by friend_code
       const { data: friendProfile, error: findError } = await supabase
         .from('profiles')
-        .select('id, full_name, unique_id')
-        .eq('unique_id', normalizedId)
+        .select('id, full_name, friend_code')
+        .eq('friend_code', normalizedCode)
         .single();
 
       console.log('Friend search result:', friendProfile, findError);
@@ -98,7 +104,7 @@ export const useFriends = () => {
         console.error('Friend not found:', findError);
         toast({
           title: "User not found",
-          description: "No user found with friend code: " + normalizedId,
+          description: "No user found with friend code: " + normalizedCode,
           variant: "destructive",
         });
         return;
@@ -139,7 +145,7 @@ export const useFriends = () => {
         .insert({
           user_id: user.id,
           friend_id: friendProfile.id,
-          friend_name: friendProfile.full_name || 'Unknown User'
+          status: 'accepted'
         });
 
       if (addError) {
