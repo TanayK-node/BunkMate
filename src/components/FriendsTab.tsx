@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,12 +8,13 @@ import { useFriends } from '@/hooks/useFriends';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { FriendAttendanceView } from '@/components/FriendAttendanceView';
+import { EditFriendName } from '@/components/EditFriendName';
 
 export const FriendsTab: React.FC = () => {
   const [friendCode, setFriendCode] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState<any>(null);
-  const { friends, loading, addFriend, removeFriend } = useFriends();
+  const { friends, loading, addFriend, removeFriend, renameFriend } = useFriends();
   const { profile } = useProfile();
   const { toast } = useToast();
 
@@ -57,6 +57,10 @@ export const FriendsTab: React.FC = () => {
 
   const handleBackToFriends = () => {
     setSelectedFriend(null);
+  };
+
+  const handleRenameFriend = (friendId: string, customName: string) => {
+    renameFriend(friendId, customName);
   };
 
   // Validate input as user types
@@ -170,12 +174,17 @@ export const FriendsTab: React.FC = () => {
               {friends.map((friend, index) => (
                 <div key={friend.id}>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div>
-                        <p className="font-medium">{friend.friend_name}</p>
+                      <div className="flex-1 min-w-0">
+                        <EditFriendName
+                          friendId={friend.id}
+                          currentName={friend.friend_name}
+                          customName={friend.custom_name}
+                          onRename={handleRenameFriend}
+                        />
                         <p className="text-sm text-gray-500 font-mono">#{friend.friend_code}</p>
                       </div>
                     </div>
@@ -191,7 +200,7 @@ export const FriendsTab: React.FC = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleRemoveFriend(friend.id, friend.friend_name)}
+                        onClick={() => handleRemoveFriend(friend.id, friend.custom_name || friend.friend_name)}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="w-4 h-4" />

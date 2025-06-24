@@ -51,6 +51,7 @@ export type Database = {
       friends: {
         Row: {
           created_at: string
+          custom_name: string | null
           friend_id: string
           id: string
           status: string | null
@@ -58,6 +59,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_name?: string | null
           friend_id: string
           id?: string
           status?: string | null
@@ -65,6 +67,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_name?: string | null
           friend_id?: string
           id?: string
           status?: string | null

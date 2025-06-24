@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ interface FriendAttendanceViewProps {
     friend_id: string;
     friend_name: string;
     friend_code: string;
+    custom_name?: string;
   };
   onBack: () => void;
 }
@@ -85,6 +85,8 @@ export const FriendAttendanceView: React.FC<FriendAttendanceViewProps> = ({ frie
     return 'text-green-600';
   };
 
+  const displayName = friend.custom_name || friend.friend_name;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -103,7 +105,10 @@ export const FriendAttendanceView: React.FC<FriendAttendanceViewProps> = ({ frie
             <User className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h2 className="text-xl font-bold">{friend.friend_name}'s Attendance</h2>
+            <h2 className="text-xl font-bold">{displayName}'s Attendance</h2>
+            {friend.custom_name && friend.custom_name !== friend.friend_name && (
+              <p className="text-sm text-gray-400">Real name: {friend.friend_name}</p>
+            )}
             <p className="text-sm text-gray-500 font-mono">Friend Code: #{friend.friend_code}</p>
           </div>
         </div>
@@ -123,7 +128,7 @@ export const FriendAttendanceView: React.FC<FriendAttendanceViewProps> = ({ frie
               No subjects found
             </h3>
             <p className="text-gray-500">
-              {friend.friend_name} hasn't added any subjects yet
+              {displayName} hasn't added any subjects yet
             </p>
           </div>
         </div>

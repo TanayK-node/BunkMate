@@ -8,6 +8,7 @@ export type Friend = {
   friend_id: string;
   friend_name: string;
   friend_code: string;
+  custom_name?: string;
   created_at: string;
 };
 
@@ -29,6 +30,7 @@ export const useFriends = () => {
         .select(`
           id,
           friend_id,
+          custom_name,
           created_at,
           profiles!friend_id(
             id,
@@ -52,6 +54,7 @@ export const useFriends = () => {
         friend_id: friend.friend_id,
         friend_name: (friend.profiles as any)?.full_name || 'Unknown User',
         friend_code: (friend.profiles as any)?.friend_code || '',
+        custom_name: friend.custom_name || undefined,
         created_at: friend.created_at
       })) || [];
 
@@ -170,6 +173,36 @@ export const useFriends = () => {
     }
   };
 
+  const renameFriend = async (friendId: string, customName: string) => {
+    if (!user) return;
+
+    try {
+      console.log('Renaming friend with ID:', friendId, 'to:', customName);
+      
+      const { error } = await supabase
+        .from('friends')
+        .update({ custom_name: customName.trim() || null })
+        .eq('id', friendId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Friend renamed successfully!",
+      });
+
+      fetchFriends();
+    } catch (error: any) {
+      console.error('Rename friend error:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const removeFriend = async (friendId: string) => {
     if (!user) return;
 
@@ -209,6 +242,7 @@ export const useFriends = () => {
     loading,
     addFriend,
     removeFriend,
+    renameFriend,
     refetch: fetchFriends
   };
 };
