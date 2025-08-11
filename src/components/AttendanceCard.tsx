@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { EditAttendanceDialog } from "./EditAttendanceDialog";
 
 // Use a limited palette for alert icons
 import { CircleAlert, Trash2 } from "lucide-react";
@@ -102,9 +104,10 @@ export const AttendanceCard: React.FC<{
 
   return (
     <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${cardBorder}`}>
-      {/* Remove Subject Button */}
-      {onDelete && (
-        <div className="absolute top-2 right-2">
+      {/* Action buttons in top-right */}
+      <div className="absolute top-2 right-2 flex gap-1">
+        <EditAttendanceDialog subject={subject} onUpdate={onUpdate} />
+        {onDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -114,7 +117,7 @@ export const AttendanceCard: React.FC<{
                 tabIndex={0}
                 aria-label="Remove subject"
               >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-4 h-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -135,8 +138,9 @@ export const AttendanceCard: React.FC<{
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-      )}
+        )}
+      </div>
+
       {/* LEFT: Circular Progress */}
       <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 min-w-24 mr-4">
         <div className="relative">
@@ -183,6 +187,7 @@ export const AttendanceCard: React.FC<{
           )}
         </div>
       </div>
+
       {/* RIGHT: Card Info */}
       <CardContent className="flex-1 flex flex-col gap-4 p-0">
         <div>
