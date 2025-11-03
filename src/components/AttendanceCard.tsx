@@ -15,6 +15,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { EditAttendanceDialog } from "./EditAttendanceDialog";
+import { AttendanceHistoryDialog } from "./AttendanceHistoryDialog";
 
 // Use a limited palette for alert icons
 import { CircleAlert, Trash2 } from "lucide-react";
@@ -106,6 +107,7 @@ export const AttendanceCard: React.FC<{
     <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${cardBorder}`}>
       {/* Action buttons in top-right */}
       <div className="absolute top-2 right-2 flex gap-1">
+        <AttendanceHistoryDialog subjectId={subject.id} subjectName={subject.name} />
         <EditAttendanceDialog subject={subject} onUpdate={onUpdate} />
         {onDelete && (
           <AlertDialog>
