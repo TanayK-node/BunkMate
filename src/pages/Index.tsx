@@ -109,6 +109,24 @@ const Index = () => {
 
           {/* Attendance Tab */}
           <TabsContent value="attendance" className="space-y-6">
+            {/* Overall Attendance Summary */}
+            {subjects.length > 0 && (
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6 border border-primary/20">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Overall Attendance</h3>
+                <div className="flex items-center gap-6">
+                  <div className="flex-1">
+                    <div className="text-3xl font-bold text-primary">
+                      {((subjects.reduce((sum, s) => sum + s.attended, 0) / 
+                        subjects.reduce((sum, s) => sum + s.total, 0)) * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {subjects.reduce((sum, s) => sum + s.attended, 0)} / {subjects.reduce((sum, s) => sum + s.total, 0)} classes attended
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Add Subject Button */}
             <div className="mb-6">
               <AddSubjectDialog onAddSubject={handleAddSubject} />
