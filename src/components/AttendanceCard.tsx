@@ -106,7 +106,7 @@ export const AttendanceCard: React.FC<{
   return (
     <Card className={`flex group transition-all duration-500 glass-card px-2 py-3 items-center relative ${cardBorder}`}>
       {/* Action buttons in top-right */}
-      <div className="absolute top-2 right-2 flex gap-1">
+      <div className="absolute top-2 right-2 flex gap-1 z-10">
         <AttendanceHistoryDialog subjectId={subject.id} subjectName={subject.name} />
         <EditAttendanceDialog subject={subject} onUpdate={onUpdate} />
         {onDelete && (
